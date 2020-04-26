@@ -14,4 +14,5 @@ makedocs(;
 
 deploydocs(;
     repo="github.com/bdoolittle/PORTA.jl.git",
+    push_preview=true
 )
