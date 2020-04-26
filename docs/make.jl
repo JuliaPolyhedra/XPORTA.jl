@@ -9,7 +9,7 @@ makedocs(;
     repo="https://github.com/bdoolittle/PORTA.jl/blob/{commit}{path}#L{line}",
     sitename="PORTA.jl",
     authors="Brian Doolittle",
-    assets=String[],
+    # assets=String[],
 )
 
 deploydocs(;
