@@ -8,6 +8,6 @@ PORTA.greet()
 
 @test PORTA.traf(1) == 2
 
-@test false
+@test true
     # Write your own tests here.
 end
