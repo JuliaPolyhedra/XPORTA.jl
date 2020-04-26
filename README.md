@@ -4,7 +4,7 @@
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://bdoolittle.github.io/PORTA.jl/dev)
 
 #### Linux/Mac Build Status
-[![Linux/Mac Build Status](https://travis-ci.com/bdoolittle/PORTA.jl.svg?branch=master)](https://travis-ci.com/bdoolittle/PORTA.jl)
+[![Linux/Mac Build Status](http://travis-ci.com/bdoolittle/PORTA.jl.svg?branch=master)](https://travis-ci.com/bdoolittle/PORTA.jl)
 
 #### Windows Build Status
 [![Windows Build Status](https://ci.appveyor.com/api/projects/status/github/bdoolittle/PORTA.jl?svg=true)](https://ci.appveyor.com/project/bdoolittle/PORTA-jl)
