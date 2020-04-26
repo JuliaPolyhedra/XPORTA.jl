@@ -13,5 +13,5 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/bdoolittle/PORTA.jl",
+    repo="github.com/bdoolittle/PORTA.jl.git",
 )
