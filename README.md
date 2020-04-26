@@ -12,7 +12,7 @@
 [![Coveralls](https://coveralls.io/repos/github/bdoolittle/PORTA.jl/badge.svg?branch=master)](https://coveralls.io/github/bdoolittle/PORTA.jl?branch=master)
 
 #### FreeBSD Build Status
-[![FreeBSD Build Status](https://api.cirrus-ci.com/github/bdoolittle/PORTA.jl.svg)](https://cirrus-ci.com/github/bdoolittle/PORTA.jl)
+[![FreeBSD Build Status](http://api.cirrus-ci.com/github/bdoolittle/PORTA.jl.svg)](https://cirrus-ci.com/github/bdoolittle/PORTA.jl)
 
 ## Citing
 
