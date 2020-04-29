@@ -15,12 +15,10 @@ end
 
 # Pkg.test("PORTA") runs from ./test directory. Development tests from root.
 dir = pwd()
-if occursin(r".*/PORTA\.jl/test$", dir)
+if occursin(r".*/test$", dir)
     cd(_test_runner, "../")
 elseif occursin(r".*PORTA\.jl", dir)
     _test_runner()
 else
-    println(pwd())
-    println(readdir())
-    error("runtests.jl must be run from the ./PORTA.jl or ./PORTA.jl/test directories.")
+    error("runtests.jl is currently running from the $(pwd()) directory with contents $(readdir()) with. runtests.jl must be run from the ./PORTA.jl or ./PORTA.jl/test directories.")
 end
