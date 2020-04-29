@@ -1,0 +1,23 @@
+DIM = 5
+
+VALID
+3 3 0 2 3
+
+LOWER_BOUNDS
+0 1 2 2 2
+UPPER_BOUNDS
+2 2 2 5 5
+
+ELIMINATION_ORDER
+2 0 1 0 3
+
+INEQUALITIES_SECTION
+(  1) +27x1-28x2+57x4-37x5 == 0
+(  2)           -  x4+  x5 == 1
+
+(  1) + x2   -2x5 <=  -3
+(  2)     -x3     <=   0
+-2x2   + x5 <=   0
+-4/15x2-1/15x5 >=  -1
+
+END

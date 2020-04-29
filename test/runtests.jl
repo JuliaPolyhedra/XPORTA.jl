@@ -5,8 +5,6 @@ using PORTA
 function _test_runner()
     @testset "PORTA.jl" begin
 
-        @test PORTA.traf(1) == 2
-
         @testset "integration tests:" begin
             println("running inntegration tests.")
             include("./integration.jl")

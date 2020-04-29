@@ -1,0 +1,12 @@
+DIM = 3
+
+VALID
+1 5/2 0 
+
+INEQUALITIES_SECTION
+(  1) -9x1-4x2    <= -19
+(  2)         -x3 <=   0
+(  3) +3x1-2x2    <=   3
+(  4) - x1+4x2    <=   9
+
+END
