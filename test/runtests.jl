@@ -17,8 +17,8 @@ end
 dir = pwd()
 if occursin(r".*/test$", dir)
     cd(_test_runner, "../")
-elseif occursin(r".*PORTA\.jl", dir)
+elseif occursin(r".*PORTA", dir)
     _test_runner()
 else
-    error("runtests.jl is currently running from the $(pwd()) directory with contents $(readdir()) with. runtests.jl must be run from the ./PORTA.jl or ./PORTA.jl/test directories.")
+    error("runtests.jl is currently running from the $(pwd()) directory with contents $(readdir()). runtests.jl must be run from the ./PORTA or ./PORTA/test directories.")
 end
