@@ -15,7 +15,7 @@ end
 
 # Pkg.test("PORTA") runs from ./test directory. Development tests from root.
 dir = pwd()
-if occursin(r".*/test$", dir)
+if occursin(r".*test$", dir)
     cd(_test_runner, "../")
 elseif occursin(r".*PORTA", dir)
     _test_runner()
