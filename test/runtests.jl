@@ -21,5 +21,6 @@ elseif occursin(r".*PORTA\.jl", dir)
     _test_runner()
 else
     println(pwd())
+    println(readdir())
     error("runtests.jl must be run from the ./PORTA.jl or ./PORTA.jl/test directories.")
 end
