@@ -6,7 +6,7 @@ function _test_runner()
     @testset "PORTA.jl" begin
 
         @testset "integration tests:" begin
-            println("running inntegration tests.")
+            println("running integration tests.")
             include("./integration.jl")
         end
 
@@ -20,5 +20,6 @@ if occursin(r".*/PORTA\.jl/test$", dir)
 elseif occursin(r".*PORTA\.jl", dir)
     _test_runner()
 else
-    error("runtests.jl must be run from the ./PORTA or ./PORTA/test directories.")
+    println(pwd())
+    error("runtests.jl must be run from the ./PORTA.jl or ./PORTA.jl/test directories.")
 end
