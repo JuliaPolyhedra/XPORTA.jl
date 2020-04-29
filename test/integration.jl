@@ -69,7 +69,7 @@ end
         PORTA.make_tmp_dir(dir=dir)
 
         println(dir)
-        prinlnt(pwd())
+        println(pwd())
 
         # copy example files into porta_tmp to avoid mutation and creation
         ex1_poi_filepath = cp(dir*"example1.poi", dir*"porta_tmp/example1.poi")
