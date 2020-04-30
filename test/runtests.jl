@@ -5,6 +5,11 @@ using PORTA
 function _test_runner()
     @testset "PORTA.jl" begin
 
+        @testset "unit tests:" begin
+            println("running unit tests.")
+            include("./unit.jl")
+        end
+
         @testset "integration tests:" begin
             println("running integration tests.")
             include("./integration.jl")

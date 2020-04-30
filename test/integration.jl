@@ -1,6 +1,6 @@
 using Test, UUIDs
 
-@testset "PORTA.jl" begin
+@testset "src/PORTA.jl" begin
 
 using PORTA
 
