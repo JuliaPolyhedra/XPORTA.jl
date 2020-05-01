@@ -15,19 +15,17 @@ using PORTA_jll
 using Suppressor
 
 """
-    PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
-
 PORTA methods accept integer or rational valued matrices. The `PortaMatrix` type simplifies notation.
+
+    PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
 """
 PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
 
 """
 The vertex representation of a polyhedra. This struct is analogous to PORTA files
-with the `.poi` extensioon.
+with the `.poi` extension. Constructor arguments are *optional*.
 
     POI(;vertices::PortaMatrix, rays::PortaMatrix)
-
-The arguments to the constructor are *optional*
 
 `POI` Fields:
 * `conv_section`: `Matrix{Int}` or `Matrix{Rational{Int}}`, each matrix row is a vertex.
@@ -52,6 +50,14 @@ struct POI{T,S}
 
         new{eltype(vertices), eltype(rays)}(vertices, rays, dim)
     end
+end
+
+# TODO: Yayy
+struct IEQ
+end
+
+function read_ieq(filepath::String)::POI{Rational{Int64},Rational{Int64}}
+
 end
 
 """
