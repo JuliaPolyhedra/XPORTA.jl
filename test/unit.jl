@@ -68,4 +68,41 @@ using Test
     end
 end
 
+@testset "PORTA.IEQ()" begin
+    using PORTA: IEQ
+
+    @testset "empty initialization" begin
+        null_ieq = IEQ()
+
+        @test null_ieq isa IEQ
+        @test null_ieq isa IEQ{Int}
+        @test null_ieq.dim == 0
+        @test null_ieq.inequalities == Array{Int64}(undef,0,0)
+        @test null_ieq.equalities == Array{Int64}(undef,0,0)
+        @test null_ieq.lower_bounds == Array{Int64}(undef,0,0)
+        @test null_ieq.upper_bounds == Array{Int64}(undef,0,0)
+        @test null_ieq.elimination_order == Array{Int64}(undef,0,0)
+    end
+
+    @testset "simple initializations" begin
+        ineq_ieq = IEQ(inequalities = [1//1 0;0 0])
+        @test ineq_ieq isa IEQ
+        @test ineq_ieq isa IEQ{Rational{Int}}
+        @test ineq_ieq.dim == 2
+        @test ineq_ieq.inequalities == [1 0;0 0]
+        @test ineq_ieq.equalities == Array{Int64}(undef,0,0)
+
+        eq_ieq = IEQ(equalities = [5//2 3//4 2;1 2 3])
+        @test eq_ieq isa IEQ
+        @test eq_ieq isa IEQ{Rational{Int}}
+        @test eq_ieq.dim == 3
+        @test eq_ieq.equalities == [5//2 3//4 2;1 2 3]
+        @test eq_ieq.inequalities == Array{Int64}(undef,0,0)
+    end
+
+    @testset "DomainError is thrown if dimension do not match" begin
+        @test_throws DomainError IEQ(inequalities = [1 0;0 0], equalities = [1 2 3;4 5 6])
+    end
+end
+
 end

@@ -14,6 +14,9 @@ using PORTA_jll
 
 using Suppressor
 
+# including local files
+include("./file_io.jl")
+
 """
 PORTA methods accept integer or rational valued matrices. The `PortaMatrix` type simplifies notation.
 
@@ -22,7 +25,7 @@ PORTA methods accept integer or rational valued matrices. The `PortaMatrix` type
 PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
 
 """
-The vertex representation of a polyhedra. This struct is analogous to PORTA files
+The vertex representation of a polyhedron. This struct is analogous to PORTA files
 with the `.poi` extension. Constructor arguments are *optional*.
 
     POI(;vertices::PortaMatrix, rays::PortaMatrix)
@@ -30,7 +33,7 @@ with the `.poi` extension. Constructor arguments are *optional*.
 `POI` Fields:
 * `conv_section`: `Matrix{Int}` or `Matrix{Rational{Int}}`, each matrix row is a vertex.
 * `cone_section`: `Matrix{Int}` or `Matrix{Rational{Int}}`, each matrix row is a ray.
-* `dim`: `Int`, the dimension of vertices and rays (rays and vertices must have the same number of column).
+* `dim`: `Int`, the dimension of vertices and rays. This field is auto-populated on construction.
 
 A `DomainError` is thrown if the column dimension of rays and vertices is not equal.
 """
@@ -52,80 +55,80 @@ struct POI{T,S}
     end
 end
 
-# TODO: Yayy
-struct IEQ
-end
+@doc raw"""
+The intersecting halfspaces representation of a polyhedron. This struct is analogous
+to PORTA files with the `.ieq` extension. Constructor arguments are *optional*.
 
-function read_ieq(filepath::String)::POI{Rational{Int64},Rational{Int64}}
+    IEQ(;
+        inequalities :: PortaMatrix,
+        equalities :: PortaMatrix,
+        lower_bounds :: PortaMatrix,
+        upper_bounds :: PortaMatrix,
+        elimination_order :: PortaMatrix
+    )
 
-end
+The `IEQ` struct can be initialized with either `Rational{Int}` or `Int` valued matrices.
+On construction, all matrix values are standardized. By default matrix elements are
+`Int`, if one field has `Rational{Int}` values then the entire `IEQ` struct will be
+converted to type `Rational{Int}`.
 
+Constructor arguments `inequalities` and `equalities` each represent a linear system
+of the following form.
+
+``
+\begin{bmatrix} \beta_1 \\ \vdots \\ \beta_N \end{bmatrix} \geq \text{ or } =
+\begin{bmatrix}
+\alpha_{1,1} & \dots & \alpha_{1,M} \\ \vdots & \ddots & \vdots \\ \alpha_{N,1} & \dots & \alpha_{N,M}
+\end{bmatrix}
+``
+
+The left hand side of the in/equality, ``\beta_i``, is the first element of the
+`inequalities` and `equalities` matrices. The remainder of each row is populated by
+row vector ``\vec{\alpha}`` with length ``M``. The resulting matrix has ``M+1``
+columns to capture both ``\alpha`` and ``\beta``.
+
+`IEQ` Fields:
+* `inequalities`: each matrix row is a linear inequality, first element is β, `2:end` is α.
+* `equalities`: each matrix row is linear equality, first elemennt is β, `2:end` is α.
+* `lower_bounds`: each matrix row is a lower bound for enumerating integral points with `vint`.
+* `upper_bounds`: each matrix row is an upper bound for enumerating integral points with `vint`.
+* `dim`: `Int`, the dimension of in/equalities, upper/lower bounds, etc. This field is auto-populated on construction.
+
+A `DomainError` is thrown if the column dimension of fields is not equal.
 """
-    read_poi(filepath :: String) :: POI{ Rational{Int64}, Rational{Int64} }
+struct IEQ{T}
+    inequalities :: Matrix{T}
+    equalities :: Matrix{T}
+    lower_bounds :: Matrix{T}
+    upper_bounds :: Matrix{T}
+    elimination_order :: Matrix{T}
+    dim :: Int
+    function IEQ(;
+        inequalities::PortaMatrix = Array{Int}(undef,0,0),
+        equalities::PortaMatrix = Array{Int}(undef,0,0),
+        lower_bounds::PortaMatrix = Array{Int}(undef,0,0),
+        upper_bounds::PortaMatrix =  Array{Int}(undef,0,0),
+        elimination_order::PortaMatrix =  Array{Int}(undef,0,0),
+    )
+        # arguments may be converted to Rational
+        args = [inequalities, equalities, lower_bounds, upper_bounds, elimination_order]
 
-Creates a `POI` struct by parsing the provided `.poi` file. A `DomainError` is thrown
-if argument `filepath` does not end with the `.poi` extension.
-"""
-function read_poi(filepath :: String)::POI{ Rational{Int64}, Rational{Int64} }
-    if !(occursin(r"\.poi$", filepath))
-        throw(DomainError(filepath, "filepath does not end in extension `.poi`."))
-    end
-
-    open(filepath) do file
-        lines = readlines(file)
-
-        # initializing mutable variables
-        current_section = ""
-        dim = 0
-
-        # vertices and arrays will be accumulated
-        conv_section_vertices = []
-        cone_section_rays = []
-
-        # reading file line by line
-        for line in lines
-            # .poi files are headed with DIM = <num_dimensions>
-            dim_match = match(r"^DIM = (\d+)$",line)
-            if dim_match != nothing
-                dim = parse(Int64,dim_match.captures[1])
-            end
-
-            if occursin(r"CONV_SECTION", line)
-                current_section = "CONV_SECTION"
-            elseif occursin(r"CONE_SECTION", line)
-                current_section = "CONE_SECTION"
-            end
-
-            # if line contains a vertex/ray
-            if occursin(r"^(\(\s*\d+\))?(\s*\d+)+", line)
-                digit_matches = collect(eachmatch(r"\s*(\d+)(?!\))(?:/(\d+))?", line))
-                num_matches = length(digit_matches)
-
-                # map makes col vectors reshape to be row vectors
-                point = reshape( map(regex -> begin
-                    num = parse(Int64, regex.captures[1])
-                    den = (regex.captures[2] === nothing) ? 1 : parse(Int64, regex.captures[2])
-
-                    Rational(num, den)
-                end, digit_matches), (1,num_matches))
-
-                if current_section == "CONV_SECTION"
-                    push!(conv_section_vertices, point)
-                elseif current_section == "CONE_SECTION"
-                    push!(cone_section_rays, point)
-                end
-            end
-
-            if occursin(r"END", line)
-                break
-            end
+        # checking dimensions of inputs
+        dims = map(arg -> size(arg)[2], args)
+        max_dim = max(dims...)
+        if !all(map(dim -> (dim == max_dim) || (dim == 0), dims))
+            throw(DomainError(max_dim, "dimension mismatch. The number of columns in each argument should the same (or zero)."))
         end
 
-        null_matrix = Array{Rational{Int64}}(undef, 0, 0)
-        vertices = (length(conv_section_vertices) == 0) ? null_matrix : vcat(conv_section_vertices...)
-        rays = (length(conv_section_vertices) == 0) ? null_matrix : vcat(cone_section_rays...)
+        # standardizing type across IEQ struc
+        ieq_type = Int
+        if !all(map( arg -> eltype(arg) <: Int, args))
+            println("rationalizing")
+            ieq_type = Rational{Int}
+            args = map( arg -> convert.(Rational{Int}, arg), args)
+        end
 
-        POI(vertices=vertices, rays=rays)
+        new{ieq_type}(args..., max_dim)
     end
 end
 
