@@ -9,7 +9,7 @@ dir = "./test/files/"
 @testset "PORTA.make_tmp_dir()" begin
     @testset "making porta_tmp directory" begin
         # make sure directory does not exist to begin with
-        PORTA.cleanup_tmp_dir(dir=dir)
+        PORTA.cleanup_porta_tmp(dir=dir)
         @test !isdir(dir*"porta_tmp")
 
         # porta_tmp directory exists after creation
@@ -18,13 +18,13 @@ dir = "./test/files/"
         @test tmp_dir_path == dir*"porta_tmp"
 
         # porta_tmp directory is missing after creation
-        PORTA.cleanup_tmp_dir(dir=dir)
+        PORTA.cleanup_porta_tmp(dir=dir)
         @test !isdir(dir*"porta_tmp")
     end
 
     @testset "making custom_tmp directory" begin
         # make sure directory does not exist to begin with
-        PORTA.cleanup_tmp_dir(dir=dir, tmp_dir="custom_tmp")
+        rm(dir*"custom_tmp", recursive=true, force=true)
         @test !isdir(dir*"custom_tmp")
 
         # custom_tmp directory exists after creation
@@ -33,12 +33,12 @@ dir = "./test/files/"
         @test tmp_dir_path == dir*"custom_tmp"
 
         # custom_tmp directory is missing after creation
-        PORTA.cleanup_tmp_dir(dir=dir, tmp_dir="custom_tmp")
+        rm(dir*"custom_tmp", recursive=true, force=true)
         @test !isdir(dir*"custom_tmp")
     end
 end
 
-@testset "PORTA.cleanup_tmp_dir()" begin
+@testset "PORTA.cleanup_porta_tmp()" begin
     @testset "create a file in porta_tmp then cleanup" begin
         # create file without worrying about whether it already exists
         tmp_dir_path = PORTA.make_tmp_dir(dir=dir)
@@ -50,7 +50,7 @@ end
         @test isfile(tmp_file)
 
         # verify that file/directory no longer exists after cleanup
-        PORTA.cleanup_tmp_dir(dir=dir)
+        PORTA.cleanup_porta_tmp(dir=dir)
         @test !isfile(tmp_file)
         @test !isdir(dir*"porta_tmp")
 
@@ -86,7 +86,7 @@ end
     end
 
     @testset "test traf (xporta -T) with example1.poi" begin
-        PORTA.cleanup_tmp_dir(dir=dir)
+        PORTA.cleanup_porta_tmp(dir=dir)
         PORTA.make_tmp_dir(dir=dir)
 
         # copy example files into porta_tmp to avoid mutation and creation
@@ -100,11 +100,11 @@ end
         match_ieq1_string = read(dir*"example1.ieq", String)
         @test ieq1_string == match_ieq1_string
 
-        PORTA.cleanup_tmp_dir(dir=dir)
+        PORTA.cleanup_porta_tmp(dir=dir)
     end
 
     @testset "test traf (xporta -T) with example2.ieq" begin
-        PORTA.cleanup_tmp_dir(dir=dir)
+        PORTA.cleanup_porta_tmp(dir=dir)
         PORTA.make_tmp_dir(dir=dir)
 
         ex2_ieq_filepath = cp(dir*"example2.ieq", dir*"porta_tmp/example2.ieq")
@@ -119,7 +119,7 @@ end
         @test poi2.cone_section == poi2_match.cone_section
         @test poi2.conv_section == poi2_match.conv_section
 
-        PORTA.cleanup_tmp_dir(dir=dir)
+        PORTA.cleanup_porta_tmp(dir=dir)
     end
 end
 

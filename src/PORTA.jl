@@ -140,16 +140,16 @@ function make_tmp_dir(;dir::String="./", tmp_dir::String="porta_tmp") :: String
 end
 
 """
-    cleanup_tmp_dir( dir::String = "./", tmp_dir::String = "porta_tmp" )
+    cleanup_porta_tmp( dir::String = "./")
 
-Recursively removes `tmp_dir` from directory `dir`.
+Recursively removes `porta_tmp/` from directory `dir`.
 
 !!! warning
-    This method uses `rm("dir/tmp_dir/", force=true, recursive=true)`. Make sure you
-    aren't deleting important data.
+    This method uses `rm("<dir/>porta_tmp/", force=true, recursive=true)`. Make
+    sure not to delete important data.
 """
-function cleanup_tmp_dir(;dir::String="./", tmp_dir::String="porta_tmp")
-    rm(dir*tmp_dir, force=true, recursive=true)
+function cleanup_porta_tmp(;dir::String="./")
+    rm(dir*"porta_tmp", force=true, recursive=true)
 end
 
 """
