@@ -1,8 +1,6 @@
-using Test, UUIDs
+using Test, UUIDs, PORTA
 
-@testset "src/PORTA.jl" begin
-
-using PORTA
+@testset "src/filesystem.jl" begin
 
 dir = "./test/files/"
 
@@ -56,49 +54,6 @@ end
 
         # verify that directory is missing causing a SystemError to be thrown
         @test_throws SystemError walkdir(tmp_dir_path)
-    end
-end
-
-@testset "PORTA.run_xporta()" begin
-    @testset "throws DomainError if method_flag is not recognized" begin
-        @test_throws DomainError PORTA.run_xporta("-X", "dir/example1.poi")
-    end
-
-    @testset "test traf (xporta -T) with example1.poi" begin
-        PORTA.cleanup_porta_tmp(dir=dir)
-        PORTA.make_tmp_dir(dir=dir)
-
-        # copy example files into porta_tmp to avoid mutation and creation
-        ex1_poi_filepath = cp(dir*"example1.poi", dir*"porta_tmp/example1.poi")
-
-        # run xporta
-        PORTA.run_xporta("-T", "$ex1_poi_filepath")
-
-        # verify that created .ieq file contains expected results
-        ieq1_string = read(ex1_poi_filepath*".ieq", String)
-        match_ieq1_string = read(dir*"example1.ieq", String)
-        @test ieq1_string == match_ieq1_string
-
-        PORTA.cleanup_porta_tmp(dir=dir)
-    end
-
-    @testset "test traf (xporta -T) with example2.ieq" begin
-        PORTA.cleanup_porta_tmp(dir=dir)
-        PORTA.make_tmp_dir(dir=dir)
-
-        ex2_ieq_filepath = cp(dir*"example2.ieq", dir*"porta_tmp/example2.ieq")
-
-        PORTA.run_xporta("-T", "$ex2_ieq_filepath")
-
-        # reading .poi files
-        poi2 = PORTA.read_poi(ex2_ieq_filepath*".poi")
-        poi2_match = PORTA.read_poi(dir*"example2.poi")
-
-        @test poi2.dim == poi2_match.dim
-        @test poi2.cone_section == poi2_match.cone_section
-        @test poi2.conv_section == poi2_match.conv_section
-
-        PORTA.cleanup_porta_tmp(dir=dir)
     end
 end
 
