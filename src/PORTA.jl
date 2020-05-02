@@ -22,9 +22,9 @@ include("./xporta.jl")     # wrapper for the xporta binaries.
 """
 PORTA methods accept integer or rational valued matrices. The `PortaMatrix` type simplifies notation.
 
-    PortaMatrix = Union{Matrix{Int64}, Matrix{Rational{Int64}}}
+    PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
 """
-PortaMatrix = Union{Matrix{Int64}, Matrix{Rational{Int64}}}
+PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
 
 """
 The vertex representation of a polyhedron. This struct is analogous to PORTA files
@@ -36,7 +36,7 @@ with the `.poi` extension. Constructor arguments are *optional*.
 * `conv_section`: each matrix row is a vertex.
 * `cone_section`: each matrix row is a ray.
 * `valid`:  a feasible point for the vertex representation.
-* `dim`: `Int64`, the dimension of vertices and rays. This field is auto-populated on construction.
+* `dim`: `Int`, the dimension of vertices and rays. This field is auto-populated on construction.
 
 A `DomainError` is thrown if the column dimension of rays and vertices is not equal.
 """
@@ -44,11 +44,11 @@ struct POI{T}
     conv_section :: Matrix{T} # Collection of vertices
     cone_section :: Matrix{T} # Collection of Rays
     valid :: Matrix{T}
-    dim :: Int64
+    dim :: Int
     function POI(;
-        vertices::PortaMatrix = Array{Int64}(undef,0,0),
-        rays::PortaMatrix = Array{Int64}(undef,0,0),
-        valid::PortaMatrix = Array{Int64}(undef,0,0)
+        vertices::PortaMatrix = Array{Int}(undef,0,0),
+        rays::PortaMatrix = Array{Int}(undef,0,0),
+        valid::PortaMatrix = Array{Int}(undef,0,0)
     )
         args = [vertices, rays, valid]
 
@@ -60,11 +60,11 @@ struct POI{T}
         end
 
         # standardizing type across POI struct
-        poi_type = Int64
+        poi_type = Int
         poi_args = args
-        if !all(map( arg -> eltype(arg) <: Int64, poi_args))
-            poi_type = Rational{Int64}
-            poi_args = map( arg -> convert.(Rational{Int64}, arg), args)
+        if !all(map( arg -> eltype(arg) <: Int, poi_args))
+            poi_type = Rational{Int}
+            poi_args = map( arg -> convert.(Rational{Int}, arg), args)
         end
 
         new{poi_type}(poi_args..., max_dim)
@@ -84,10 +84,10 @@ to PORTA files with the `.ieq` extension. Constructor arguments are *optional*.
         valid :: PortaMatrix
     )
 
-The `IEQ` struct can be initialized with either `Rational{Int64}` or `Int64` valued matrices.
+The `IEQ` struct can be initialized with either `Rational{Int}` or `Int` valued matrices.
 On construction, all matrix values are standardized. By default matrix elements are
-`Int64`, if one field has `Rational{Int64}` values then the entire `IEQ` struct will be
-converted to type `Rational{Int64}`.
+`Int`, if one field has `Rational{Int}` values then the entire `IEQ` struct will be
+converted to type `Rational{Int}`.
 
 Constructor arguments `inequalities` and `equalities` each represent a linear system
 of the following form.
@@ -122,14 +122,14 @@ struct IEQ{T}
     upper_bounds :: Matrix{T}
     elimination_order :: Matrix{T}
     valid :: Matrix{T}
-    dim :: Int64
+    dim :: Int
     function IEQ(;
-        inequalities::PortaMatrix = Array{Int64}(undef,0,0),
-        equalities::PortaMatrix = Array{Int64}(undef,0,0),
-        lower_bounds::PortaMatrix = Array{Int64}(undef,0,0),
-        upper_bounds::PortaMatrix =  Array{Int64}(undef,0,0),
-        elimination_order::PortaMatrix =  Array{Int64}(undef,0,0),
-        valid::PortaMatrix = Array{Int64}(undef,0,0)
+        inequalities::PortaMatrix = Array{Int}(undef,0,0),
+        equalities::PortaMatrix = Array{Int}(undef,0,0),
+        lower_bounds::PortaMatrix = Array{Int}(undef,0,0),
+        upper_bounds::PortaMatrix =  Array{Int}(undef,0,0),
+        elimination_order::PortaMatrix =  Array{Int}(undef,0,0),
+        valid::PortaMatrix = Array{Int}(undef,0,0)
     )
         # arguments may be converted to Rational
         eq_args = [inequalities, equalities]
@@ -144,11 +144,11 @@ struct IEQ{T}
         end
 
         # standardizing type across IEQ struc
-        ieq_type = Int64
+        ieq_type = Int
         ieq_args = [eq_args..., point_args...]
-        if !all(map( arg -> eltype(arg) <: Int64, ieq_args))
-            ieq_type = Rational{Int64}
-            ieq_args = map( arg -> convert.(Rational{Int64}, arg), ieq_args)
+        if !all(map( arg -> eltype(arg) <: Int, ieq_args))
+            ieq_type = Rational{Int}
+            ieq_args = map( arg -> convert.(Rational{Int}, arg), ieq_args)
         end
 
         new{ieq_type}(ieq_args..., max_dim)
