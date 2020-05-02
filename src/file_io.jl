@@ -42,8 +42,8 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
                 # map makes col vectors reshape to be row vectors
                 point = reshape( map(regex -> begin
                     sign = (regex.captures[1] === nothing) ? "+" : regex.captures[1]
-                    num = parse(Int64, sign*regex.captures[2])
-                    den = (regex.captures[3] === nothing) ? 1 : parse(Int64, regex.captures[3])
+                    num = parse(Int, sign*regex.captures[2])
+                    den = (regex.captures[3] === nothing) ? 1 : parse(Int, regex.captures[3])
 
                     Rational(num, den)
                 end, digit_matches), (1,num_matches))
@@ -60,7 +60,7 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
             end
         end
 
-        null_matrix = Array{Rational{Int64}}(undef, 0, 0)
+        null_matrix = Array{Rational{Int}}(undef, 0, 0)
         vertices = (length(conv_section_vertices) == 0) ? null_matrix : vcat(conv_section_vertices...)
         rays = (length(conv_section_vertices) == 0) ? null_matrix : vcat(cone_section_rays...)
 
@@ -177,7 +177,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
         end
 
         # for initializing empty IEQ fields
-        null_matrix = Array{Rational{Int64}}(undef, 0, 0)
+        null_matrix = Array{Rational{Int}}(undef, 0, 0)
 
         IEQ(
             inequalities = (length(inequalities) == 0) ? null_matrix : vcat(inequalities...),

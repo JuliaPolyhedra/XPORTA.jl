@@ -8,8 +8,8 @@ using Test
     @testset "empty initialization" begin
         poi = POI()
 
-        @test poi.conv_section == Array{Int64}(undef,0,0)
-        @test poi.cone_section == Array{Int64}(undef,0,0)
+        @test poi.conv_section == Array{Int}(undef,0,0)
+        @test poi.cone_section == Array{Int}(undef,0,0)
         @test poi.dim ==  0
         @test poi isa POI{Int}
         @test poi isa POI
@@ -17,13 +17,13 @@ using Test
         poi_vertices = POI(vertices = [1 0;0 0])
 
         @test poi_vertices.conv_section == [1 0;0 0]
-        @test poi_vertices.cone_section == Array{Int64}(undef,0,0)
+        @test poi_vertices.cone_section == Array{Int}(undef,0,0)
         @test poi_vertices.dim == 2
         @test poi_vertices isa POI{Int}
 
         poi_rays = POI(rays = [1 0;0 0])
 
-        @test poi_rays.conv_section == Array{Int64}(undef,0,0)
+        @test poi_rays.conv_section == Array{Int}(undef,0,0)
         @test poi_rays.cone_section == [1 0;0 0]
         @test poi_rays.dim == 2
         @test poi_vertices isa POI{Int}
@@ -95,14 +95,14 @@ end
         @test ineq_ieq isa IEQ{Rational{Int}}
         @test ineq_ieq.dim == 1
         @test ineq_ieq.inequalities == [1 0;0 0]
-        @test ineq_ieq.equalities == Array{Int64}(undef,0,0)
+        @test ineq_ieq.equalities == Array{Int}(undef,0,0)
 
         eq_ieq = IEQ(equalities = [5//2 3//4 2;1 2 3])
         @test eq_ieq isa IEQ
         @test eq_ieq isa IEQ{Rational{Int}}
         @test eq_ieq.dim == 2
         @test eq_ieq.equalities == [5//2 3//4 2;1 2 3]
-        @test eq_ieq.inequalities == Array{Int64}(undef,0,0)
+        @test eq_ieq.inequalities == Array{Int}(undef,0,0)
 
         ineq_lb_ieq = IEQ(inequalities = [5 3 2;1 2 3], lower_bounds = [-1 0])
         @test ineq_lb_ieq isa IEQ
