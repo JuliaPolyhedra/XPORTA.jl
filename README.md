@@ -10,6 +10,11 @@
 
 "[PORTA](http://porta.zib.de/) is a collection of [C] routines for analyzing polytopes and polyhedra. The polyhedra are either given as the convex hull of a set of points plus (possibly) the convex cone of a set of vectors, or as a system of linear equations and inequalities." -([porta.zib.de](http://porta.zib.de/)).
 
+## Acknowledgments
+
+This project is funded by grant : ...
+
+I would like to thank Dr. Eric Chitambar and the Physics Department at University of Illinois Urbana-Champaign
 
 
 ## Citing

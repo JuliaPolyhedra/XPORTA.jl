@@ -11,18 +11,22 @@ using Test
         @test poi.conv_section == Array{Int64}(undef,0,0)
         @test poi.cone_section == Array{Int64}(undef,0,0)
         @test poi.dim ==  0
+        @test poi isa POI{Int}
+        @test poi isa POI
 
         poi_vertices = POI(vertices = [1 0;0 0])
 
         @test poi_vertices.conv_section == [1 0;0 0]
         @test poi_vertices.cone_section == Array{Int64}(undef,0,0)
         @test poi_vertices.dim == 2
+        @test poi_vertices isa POI{Int}
 
         poi_rays = POI(rays = [1 0;0 0])
 
         @test poi_rays.conv_section == Array{Int64}(undef,0,0)
         @test poi_rays.cone_section == [1 0;0 0]
         @test poi_rays.dim == 2
+        @test poi_vertices isa POI{Int}
     end
 
     @testset "throws DomainError if dimensions don't match" begin
@@ -31,7 +35,7 @@ using Test
 
     @testset "valid initializations" begin
         poi_int_int = POI(vertices=[1 0;0 0], rays = [0 1;2 3;4 5])
-        @test typeof(poi_int_int) == POI{Int64,Int64}
+        @test typeof(poi_int_int) == POI{Int}
 
         @test poi_int_int.conv_section == [1 0;0 0]
         @test poi_int_int.conv_section isa Array{Int,2}
@@ -40,25 +44,25 @@ using Test
         @test poi_int_int.dim == 2
 
         poi_int_rational = POI(vertices = [1 2 3;4 5 6], rays = [1//1 0 0;0 0 0])
-        @test typeof(poi_int_rational) == POI{Int64,Rational{Int64}}
+        @test typeof(poi_int_rational) == POI{Rational{Int}}
 
         @test poi_int_rational.conv_section == [1 2 3;4 5 6]
-        @test poi_int_rational.conv_section isa Array{Int,2}
+        @test poi_int_rational.conv_section isa Array{Rational{Int},2}
         @test poi_int_rational.cone_section == [1//1 0 0;0 0 0]
         @test poi_int_rational.cone_section isa Array{Rational{Int},2}
         @test poi_int_rational.dim == 3
 
         poi_rational_int = POI(vertices=[1//1 0;0 0], rays = [1 1])
-        @test typeof(poi_rational_int) == POI{Rational{Int64},Int64}
+        @test typeof(poi_rational_int) == POI{Rational{Int}}
 
         @test poi_rational_int.conv_section == [1//1 0;0 0]
         @test poi_rational_int.conv_section isa Array{Rational{Int},2}
         @test poi_rational_int.cone_section == [1 1]
-        @test poi_rational_int.cone_section isa Array{Int,2}
+        @test poi_rational_int.cone_section isa Array{Rational{Int},2}
         @test poi_rational_int.dim == 2
 
         poi_rational_rational = POI(vertices=[1//1 1//2], rays = [1 1;2 2;3 3//3])
-        @test typeof(poi_rational_rational) == POI{Rational{Int64},Rational{Int64}}
+        @test typeof(poi_rational_rational) == POI{Rational{Int}}
 
         @test poi_rational_rational.conv_section == [1//1 1//2]
         @test poi_rational_rational.conv_section isa Array{Rational{Int},2}
@@ -77,11 +81,12 @@ end
         @test null_ieq isa IEQ
         @test null_ieq isa IEQ{Int}
         @test null_ieq.dim == 0
-        @test null_ieq.inequalities == Array{Int64}(undef,0,0)
-        @test null_ieq.equalities == Array{Int64}(undef,0,0)
-        @test null_ieq.lower_bounds == Array{Int64}(undef,0,0)
-        @test null_ieq.upper_bounds == Array{Int64}(undef,0,0)
-        @test null_ieq.elimination_order == Array{Int64}(undef,0,0)
+        @test null_ieq.inequalities == Array{Int}(undef,0,0)
+        @test null_ieq.equalities == Array{Int}(undef,0,0)
+        @test null_ieq.lower_bounds == Array{Int}(undef,0,0)
+        @test null_ieq.upper_bounds == Array{Int}(undef,0,0)
+        @test null_ieq.valid == Array{Int}(undef,0,0)
+        @test null_ieq.elimination_order == Array{Int}(undef,0,0)
     end
 
     @testset "simple initializations" begin
