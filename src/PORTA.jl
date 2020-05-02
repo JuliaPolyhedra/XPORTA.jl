@@ -111,24 +111,26 @@ struct IEQ{T}
         elimination_order::PortaMatrix =  Array{Int}(undef,0,0),
     )
         # arguments may be converted to Rational
-        args = [inequalities, equalities, lower_bounds, upper_bounds, elimination_order]
+        eq_args = [inequalities, equalities]
+        point_args = [lower_bounds, upper_bounds, elimination_order]
 
-        # checking dimensions of inputs
-        dims = map(arg -> size(arg)[2], args)
-        max_dim = max(dims...)
-        if !all(map(dim -> (dim == max_dim) || (dim == 0), dims))
+        # checking dimensions of inputs equality matrices have one extra column
+        eq_dims = map(arg -> (size(arg)[2] == 0) ? 0 : size(arg)[2] - 1, eq_args)
+        point_dims = map(arg -> size(arg)[2], point_args)
+        max_dim = max(point_dims..., eq_dims...)
+        if !all(map(dim -> (dim == max_dim) || (dim == 0), [eq_dims..., point_dims...]))
             throw(DomainError(max_dim, "dimension mismatch. The number of columns in each argument should the same (or zero)."))
         end
 
         # standardizing type across IEQ struc
         ieq_type = Int
-        if !all(map( arg -> eltype(arg) <: Int, args))
-            println("rationalizing")
+        ieq_args = [eq_args..., point_args...]
+        if !all(map( arg -> eltype(arg) <: Int, ieq_args))
             ieq_type = Rational{Int}
-            args = map( arg -> convert.(Rational{Int}, arg), args)
+            ieq_args = map( arg -> convert.(Rational{Int}, arg), ieq_args)
         end
 
-        new{ieq_type}(args..., max_dim)
+        new{ieq_type}(ieq_args..., max_dim)
     end
 end
 

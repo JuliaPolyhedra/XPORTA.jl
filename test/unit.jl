@@ -88,16 +88,23 @@ end
         ineq_ieq = IEQ(inequalities = [1//1 0;0 0])
         @test ineq_ieq isa IEQ
         @test ineq_ieq isa IEQ{Rational{Int}}
-        @test ineq_ieq.dim == 2
+        @test ineq_ieq.dim == 1
         @test ineq_ieq.inequalities == [1 0;0 0]
         @test ineq_ieq.equalities == Array{Int64}(undef,0,0)
 
         eq_ieq = IEQ(equalities = [5//2 3//4 2;1 2 3])
         @test eq_ieq isa IEQ
         @test eq_ieq isa IEQ{Rational{Int}}
-        @test eq_ieq.dim == 3
+        @test eq_ieq.dim == 2
         @test eq_ieq.equalities == [5//2 3//4 2;1 2 3]
         @test eq_ieq.inequalities == Array{Int64}(undef,0,0)
+
+        ineq_lb_ieq = IEQ(inequalities = [5 3 2;1 2 3], lower_bounds = [-1 0])
+        @test ineq_lb_ieq isa IEQ
+        @test ineq_lb_ieq isa IEQ{Int}
+        @test ineq_lb_ieq.dim == 2
+        @test ineq_lb_ieq.inequalities == [5 3 2;1 2 3]
+        @test ineq_lb_ieq.lower_bounds == [-1 0]
     end
 
     @testset "DomainError is thrown if dimension do not match" begin
