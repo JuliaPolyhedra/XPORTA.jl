@@ -1,10 +1,10 @@
 """
-    read_poi( filepath::String ) :: POI{Rational{Int}}
+    read_poi( filepath::String ) :: POI{Rational{Int64}}
 
 Creates a `POI` struct by parsing the provided `.poi` file. A `DomainError` is thrown
 if argument `filepath` does not end with the `.poi` extension.
 """
-function read_poi(filepath :: String)::POI{Rational{Int}}
+function read_poi(filepath :: String)::POI{Rational{Int64}}
     if !(occursin(r"\.poi$", filepath))
         throw(DomainError(filepath, "filepath does not end in extension `.poi`."))
     end
@@ -25,7 +25,7 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
             # .poi files are headed with DIM = <num_dimensions>
             dim_match = match(r"^DIM = (\d+)$",line)
             if dim_match != nothing
-                dim = parse(Int,dim_match.captures[1])
+                dim = parse(Int64,dim_match.captures[1])
             end
 
             if occursin(r"CONV_SECTION", line)
@@ -42,8 +42,8 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
                 # map makes col vectors reshape to be row vectors
                 point = reshape( map(regex -> begin
                     sign = (regex.captures[1] === nothing) ? "+" : regex.captures[1]
-                    num = parse(Int, sign*regex.captures[2])
-                    den = (regex.captures[3] === nothing) ? 1 : parse(Int, regex.captures[3])
+                    num = parse(Int64, sign*regex.captures[2])
+                    den = (regex.captures[3] === nothing) ? 1 : parse(Int64, regex.captures[3])
 
                     Rational(num, den)
                 end, digit_matches), (1,num_matches))
@@ -60,7 +60,7 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
             end
         end
 
-        null_matrix = Array{Rational{Int}}(undef, 0, 0)
+        null_matrix = Array{Rational{Int64}}(undef, 0, 0)
         vertices = (length(conv_section_vertices) == 0) ? null_matrix : vcat(conv_section_vertices...)
         rays = (length(conv_section_vertices) == 0) ? null_matrix : vcat(cone_section_rays...)
 
@@ -69,12 +69,12 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
 end
 
 """
-    read_ieq( filepath::String ) :: IEQ{Rational{Int}}
+    read_ieq( filepath::String ) :: IEQ{Rational{Int64}}
 
 Creates an `IEQ` struct by parsing the provided `.ieq` file. A `DomainError` is thrown
 if argument `filepath` does not end with the `.ieq` extension.
 """
-function read_ieq(filepath::String)::IEQ{Rational{Int}}
+function read_ieq(filepath::String)::IEQ{Rational{Int64}}
     if !(occursin(r"\.ieq$", filepath))
         throw(DomainError(filepath, "filepath does not end in extension `.ieq`."))
     end
@@ -98,7 +98,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
             # .ieq files are headed with DIM = <num_dimensions>
             dim_match = match(r"^DIM = (\d+)$",line)
             if dim_match != nothing
-                dim = parse(Int,dim_match.captures[1])
+                dim = parse(Int64,dim_match.captures[1])
             end
 
             if occursin(r"LOWER_BOUNDS", line)
@@ -120,12 +120,12 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                     lhs_matches = collect(eachmatch(r"([+-])\s*(?:(\d+)(?!\))(?:/(\d+))?)?x(\d+)", line))
 
                     # initializing empty vector
-                    data_vector = zeros(Rational{Int}, (1,dim + 1))
+                    data_vector = zeros(Rational{Int64}, (1,dim + 1))
                     for lhs_match in lhs_matches
                         sign = lhs_match.captures[1]
-                        num = (lhs_match.captures[2] === nothing) ? parse(Int, sign*"1") : parse(Int, sign*lhs_match.captures[2])
-                        den = (lhs_match.captures[3] === nothing) ? 1 : parse(Int, lhs_match.captures[3])
-                        index = parse(Int, lhs_match.captures[4])
+                        num = (lhs_match.captures[2] === nothing) ? parse(Int64, sign*"1") : parse(Int64, sign*lhs_match.captures[2])
+                        den = (lhs_match.captures[3] === nothing) ? 1 : parse(Int64, lhs_match.captures[3])
+                        index = parse(Int64, lhs_match.captures[4])
 
                         data_vector[index] += Rational(num, den)
                     end
@@ -135,7 +135,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
 
                     rel_sign = rhs_match.captures[1]
                     int_sign = (rhs_match.captures[2] === nothing) ? "+" : rhs_match.captures[2]
-                    rhs_int = parse(Int, int_sign*rhs_match.captures[3])
+                    rhs_int = parse(Int64, int_sign*rhs_match.captures[3])
                     data_vector[end] = rhs_int
 
                     if (rel_sign == "<=") || (rel_sign == "=<")
@@ -153,8 +153,8 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                     # map makes col vectors reshape to be row vectors
                     point = reshape( map(regex -> begin
                         sign = (regex.captures[1] === nothing) ? "+" : regex.captures[1]
-                        num = parse(Int, sign*regex.captures[2])
-                        den = (regex.captures[3] === nothing) ? 1 : parse(Int, regex.captures[3])
+                        num = parse(Int64, sign*regex.captures[2])
+                        den = (regex.captures[3] === nothing) ? 1 : parse(Int64, regex.captures[3])
 
                         Rational(num, den)
                     end, digit_matches), (1,num_matches))
@@ -177,7 +177,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
         end
 
         # for initializing empty IEQ fields
-        null_matrix = Array{Rational{Int}}(undef, 0, 0)
+        null_matrix = Array{Rational{Int64}}(undef, 0, 0)
 
         IEQ(
             inequalities = (length(inequalities) == 0) ? null_matrix : vcat(inequalities...),
