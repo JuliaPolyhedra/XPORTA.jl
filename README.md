@@ -14,7 +14,7 @@
 
 This project is funded by grant : ...
 
-I would like to thank Dr. Eric Chitambar and the Physics Department at University of Illinois Urbana-Champaign
+This project was made possible with Dr. Eric Chitambar' advisory and the general support of the Physics Department at University of Illinois Urbana-Champaign.
 
 
 ## Citing

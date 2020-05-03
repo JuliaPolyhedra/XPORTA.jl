@@ -18,7 +18,7 @@ with the `.poi` extension. Constructor arguments are *optional*.
 * `conv_section`: each matrix row is a vertex.
 * `cone_section`: each matrix row is a ray.
 * `valid`:  a feasible point for the vertex representation.
-* `dim`: `Int`, the dimension of vertices and rays. This field is auto-populated on construction.
+* `dim`: the dimension of vertices and rays. This field is auto-populated on construction.
 
 A `DomainError` is thrown if the column dimension of rays and vertices is not equal.
 """
