@@ -18,5 +18,5 @@ Recursively removes `porta_tmp/` from directory `dir`.
     sure not to delete important data.
 """
 function cleanup_porta_tmp(;dir::String="./")
-    rm(dir*"porta_tmp", force=true, recursive=true)
+    rm(dir*"porta_tmp/", force=true, recursive=true)
 end

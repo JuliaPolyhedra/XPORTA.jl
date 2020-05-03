@@ -1,8 +1,8 @@
-using Test
+using Test, PORTA
 
 @testset "src/file_io.jl" begin
 
-using PORTA
+dir = "./test/files/"
 
 @testset "PORTA.read_poi()" begin
     @testset "error thrown if file not `.poi`" begin
@@ -48,6 +48,50 @@ end
         @test ieq.equalities == [27 -28 0 57 -37 0; 0 0 0 -1 1 1]
         @test ieq.inequalities ==  [0 1 0 0 -2  -3; 0 0 -1 0 0 0; 0 -2 0 0 1 0; 0 4//15 0 0 1//15 1]
     end
+end
+
+@testset "PORTA.write_poi()" begin
+    test_dir = PORTA.make_tmp_dir(dir=dir)
+
+    @testset "filename may end in `.poi`" begin
+        filepath = PORTA.write_poi("filename_test.poi", PORTA.POI(vertices=[1 0 0;0 -2 0;0 0 1]), dir=test_dir)
+        @test filepath == test_dir * "/filename_test.poi"
+    end
+
+    @testset "simple vertices" begin
+        filepath = PORTA.write_poi("int_vert_test", PORTA.POI(vertices=[1 0 0;0 -2 0;0 0 1]), dir=test_dir)
+        @test filepath == "./test/files/porta_tmp/int_vert_test.poi"
+        written_poi = PORTA.read_poi(filepath)
+
+        @test written_poi.dim == 3
+        @test written_poi.conv_section == [1 0 0;0 -2 0;0 0 1]
+        @test written_poi.valid == Array{Rational{Int}}(undef, 0, 0)
+        @test written_poi.cone_section == Array{Rational{Int}}(undef, 0, 0)
+    end
+
+    @testset "simple rays" begin
+        filepath = PORTA.write_poi("int_ray_test", PORTA.POI(rays=[1 2 3;4 5 6;7 8 9], valid=[3 3 3]), dir=test_dir)
+        @test filepath == "./test/files/porta_tmp/int_ray_test.poi"
+        written_poi = PORTA.read_poi(filepath)
+
+        @test written_poi.dim == 3
+        @test written_poi.conv_section == Array{Rational{Int}}(undef, 0, 0)
+        @test written_poi.valid == [3 3 3]
+        @test written_poi.cone_section == [1 2 3;4 5 6;7 8 9]
+    end
+
+    @testset "rational vertices" begin
+        filepath = PORTA.write_poi("rational_vert_test", PORTA.POI(vertices=[1//2 3//4;5//6 7//8;0 -1]), dir=test_dir)
+        @test filepath == "./test/files/porta_tmp/rational_vert_test.poi"
+        written_poi = PORTA.read_poi(filepath)
+
+        @test written_poi.dim == 2
+        @test written_poi.conv_section == [1//2 3//4;5//6 7//8;0 -1]
+        @test written_poi.valid == Array{Rational{Int}}(undef, 0, 0)
+        @test written_poi.cone_section == Array{Rational{Int}}(undef, 0, 0)
+    end
+
+    PORTA.cleanup_porta_tmp(dir=dir)
 end
 
 end

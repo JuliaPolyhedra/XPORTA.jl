@@ -19,6 +19,7 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
         # vertices and arrays will be accumulated
         conv_section_vertices = []
         cone_section_rays = []
+        valid_section = []
 
         # reading file line by line
         for line in lines
@@ -32,6 +33,8 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
                 current_section = "CONV_SECTION"
             elseif occursin(r"CONE_SECTION", line)
                 current_section = "CONE_SECTION"
+            elseif occursin(r"VALID", line)
+                current_section = "VALID"
             end
 
             # if line contains a vertex/ray
@@ -52,6 +55,8 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
                     push!(conv_section_vertices, point)
                 elseif current_section == "CONE_SECTION"
                     push!(cone_section_rays, point)
+                elseif current_section == "VALID"
+                    push!(valid_section, point)
                 end
             end
 
@@ -62,9 +67,10 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
 
         null_matrix = Array{Rational{Int}}(undef, 0, 0)
         vertices = (length(conv_section_vertices) == 0) ? null_matrix : vcat(conv_section_vertices...)
-        rays = (length(conv_section_vertices) == 0) ? null_matrix : vcat(cone_section_rays...)
+        rays = (length(cone_section_rays) == 0) ? null_matrix : vcat(cone_section_rays...)
+        valid = (length(valid_section) == 0) ? null_matrix : vcat(valid_section...)
 
-        POI(vertices=vertices, rays=rays)
+        POI(vertices=vertices, rays=rays, valid=valid)
     end
 end
 
@@ -189,12 +195,47 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
         )
     end
 end
-#
-#
-# function write_poi(filename :: String, poi::POI{T,S}; dir::String="./") :: String
-#     # TODO:
-# end
-#
+
+"""
+    write_poi(filename::String, poi::POI; dir::String="./") :: String
+
+Creates a `.poi` file, `dir/filename.poi`, from the provided `POI`. If `filename`
+does not explicitly have the `.poi` extension, it will automatically be added. The
+method returns the complete file path for the created file, `dir/filename.poi`.
+"""
+function write_poi(filename::String, poi::POI; dir::String="./") :: String
+
+    sep = occursin(r"/$", dir) ? "" : "/"
+    ext = occursin(r"\.poi$", filename) ? "" : ".poi"
+    filepath = dir * sep * filename * ext
+
+    open(filepath, "w") do file
+        # adding DIM line
+        println(file, "DIM = ", poi.dim, "\n")
+
+        poi_sections =  [
+            ("VALID", poi.valid),
+            ("CONV_SECTION", poi.conv_section),
+            ("CONE_SECTION", poi.cone_section)
+        ]
+
+        for section in poi_sections
+            # only write a section if there are points
+            if length(section[2]) > 0
+                println(file, "\n", section[1])
+
+                for row_id in 1:size(section[2])[1]
+                    println(file, " ", replace(join(section[2][row_id,:], " "), r"//" => s"/"))
+                end
+            end
+        end
+
+        println(file, "\nEND\n")
+    end
+
+    return filepath
+end
+
 # function write_ieq(filename :: String, ieq::IEQ{T,S,R,Q,P}; dir::String="./") :: String
 #     # TODO:
 # end
