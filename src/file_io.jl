@@ -204,7 +204,6 @@ does not explicitly have the `.poi` extension, it will automatically be added. T
 method returns the complete file path for the created file, `dir/filename.poi`.
 """
 function write_poi(filename::String, poi::POI; dir::String="./") :: String
-
     sep = occursin(r"/$", dir) ? "" : "/"
     ext = occursin(r"\.poi$", filename) ? "" : ".poi"
     filepath = dir * sep * filename * ext

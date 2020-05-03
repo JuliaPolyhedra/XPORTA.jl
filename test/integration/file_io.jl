@@ -51,7 +51,7 @@ end
 end
 
 @testset "PORTA.write_poi()" begin
-    test_dir = PORTA.make_tmp_dir(dir=dir)
+    test_dir = PORTA.make_porta_tmp(dir=dir)
 
     @testset "filename may end in `.poi`" begin
         filepath = PORTA.write_poi("filename_test.poi", PORTA.POI(vertices=[1 0 0;0 -2 0;0 0 1]), dir=test_dir)
@@ -121,7 +121,7 @@ end
 end
 
 @testset " PORTA.write_ieq()" begin
-    test_dir = PORTA.make_tmp_dir(dir=dir)
+    test_dir = PORTA.make_porta_tmp(dir=dir)
 
     @testset "simple inequalities" begin
         @test !isfile("./test/files/porta_tmp/int_ineq_test.ieq")

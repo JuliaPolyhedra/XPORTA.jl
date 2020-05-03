@@ -28,3 +28,11 @@ function run_xporta(method_flag::String, args::String; suppress::Bool=true)
         end
     end
 end
+
+# function traf(poi::POI; dir="./", filename, cleanup=true) :: IEQ
+#     write_poi(filename,)
+# end
+#
+# function traf(ieq::IEQ) :: POI
+#
+# end

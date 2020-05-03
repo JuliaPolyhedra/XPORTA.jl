@@ -11,7 +11,7 @@ dir = "./test/files/"
 
     @testset "test traf (xporta -T) with example1.poi" begin
         PORTA.cleanup_porta_tmp(dir=dir)
-        PORTA.make_tmp_dir(dir=dir)
+        PORTA.make_porta_tmp(dir=dir)
 
         # copy example files into porta_tmp to avoid mutation and creation
         ex1_poi_filepath = cp(dir*"example1.poi", dir*"porta_tmp/example1.poi")
@@ -35,7 +35,7 @@ dir = "./test/files/"
 
     @testset "test traf (xporta -T) with example2.ieq" begin
         PORTA.cleanup_porta_tmp(dir=dir)
-        PORTA.make_tmp_dir(dir=dir)
+        PORTA.make_porta_tmp(dir=dir)
 
         ex2_ieq_filepath = cp(dir*"example2.ieq", dir*"porta_tmp/example2.ieq")
 

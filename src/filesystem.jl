@@ -1,11 +1,11 @@
 """
-    make_tmp_dir( dir::String = "./", tmp_dir::String = "porta_tmp") :: String
+    make_porta_tmp( dir::String = "./") :: String
 
-Creates the `tmp_dir` directory within `dir` and return the `tmp_dir` path. By
-default, the created directory is `./porta_tmp`.
+Creates the `<dir/>porta_tmp` directory and returns the `porta_tmp` path.
 """
-function make_tmp_dir(;dir::String="./", tmp_dir::String="porta_tmp") :: String
-    mkpath(dir*tmp_dir)
+function make_porta_tmp(;dir::String="./") :: String
+    sep = occursin(r"/$", dir) ? "" : "/"
+    mkpath(dir * sep * "porta_tmp")
 end
 
 """
