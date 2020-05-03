@@ -236,6 +236,92 @@ function write_poi(filename::String, poi::POI; dir::String="./") :: String
     return filepath
 end
 
-# function write_ieq(filename :: String, ieq::IEQ{T,S,R,Q,P}; dir::String="./") :: String
-#     # TODO:
-# end
+"""
+    write_ieq( filename::String, ieq::IEQ; dir::String="./") :: String
+
+Creates an `.ieq` file, `dir/filename.ieq`, from the provided `IEQ` struct. If
+`filename` does not explicitly contain the `.ieq` extension, it will be added
+automatically. The method returns the complete file path for the created file,
+`dir/filename.ieq`.
+"""
+function write_ieq(filename::String, ieq::IEQ; dir::String="./") :: String
+    sep = occursin(r"/$", dir) ? "" : "/"
+    ext = occursin(r"\.ieq$", filename) ? "" : ".ieq"
+    filepath = dir * sep * filename * ext
+
+    open(filepath, "w") do file
+        # adding DIM line
+        println(file, "DIM = ", ieq.dim, "\n")
+
+        ieq_sections =  [
+            ("VALID", ieq.valid),
+            ("LOWER_BOUNDS", ieq.lower_bounds),
+            ("UPPER_BOUNDS", ieq.upper_bounds),
+            ("ELIMINATION_ORDER", ieq.elimination_order)
+        ]
+
+        for section in ieq_sections
+            # only write a section if there are points
+            if length(section[2]) > 0
+                println(file, "\n", section[1])
+
+                for row_id in 1:size(section[2])[1]
+                    println(file, " ", replace(join(section[2][row_id,:], " "), r"//" => s"/"))
+                end
+            end
+        end
+
+        if (length(ieq.equalities) > 0) || (length(ieq.inequalities) > 0)
+            # equalities and inequalities are found in the INEQUALITIES_SECTION
+            println(file, "\nINEQUALITIES_SECTION")
+
+            # writing equalities
+            if (length(ieq.equalities) > 0)
+                for row_id in 1:size(ieq.equalities)[1]
+                    for col_id in 1:length(ieq.equalities[row_id,1:end-1])
+                        el = ieq.equalities[row_id, col_id]
+                        if el == 0
+                            continue
+                        end
+
+                        el_sign = (el > 0) ? "+" : ""
+                        el_str = replace(string(el), r"//" => s"/")
+                        id_str = string(col_id)
+
+                        print(file, " ", el_sign, el_str, "x", id_str,)
+                    end
+
+                    print(file, " == ")
+                    println(file, replace(string(ieq.equalities[row_id,end]), r"//" => s"/"))
+                end
+
+                println(file, "\n")
+            end
+
+            # writing inequalities
+            if (length(ieq.inequalities) > 0)
+                for row_id in 1:size(ieq.inequalities)[1]
+                    for col_id in 1:length(ieq.inequalities[row_id, 1:end-1])
+                        el = ieq.inequalities[row_id, col_id]
+                        if el == 0
+                            continue
+                        end
+
+                        el_sign = (el > 0) ? "+" : ""
+                        el_str = replace(string(el), r"//" => s"/")
+                        id_str = string(col_id)
+
+                        print(file, " ", el_sign, el_str, "x", id_str,)
+                    end
+
+                    print(file, " <= ")
+                    println(file, replace(string(ieq.inequalities[row_id,end]), r"//" => s"/"))
+                end
+            end
+        end
+
+        println(file, "\nEND\n")
+    end
+
+    return filepath
+end
