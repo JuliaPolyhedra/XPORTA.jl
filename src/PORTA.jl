@@ -14,6 +14,10 @@ using PORTA_jll
 
 using Suppressor
 
+export run_xporta, traf
+export POI, IEQ
+export read_ieq, read_poi, write_ieq, write_poi
+
 # including local files
 include("./types.jl")
 include("./filesystem.jl") # utilities for create and removing directories

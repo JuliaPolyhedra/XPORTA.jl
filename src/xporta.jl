@@ -47,7 +47,7 @@ where `kwargs` is shorthand for the following keyword arguments:
 * `filename :: String = "traf_tmp"`- The name of produced files
 * `opt_flag :: String = ""` - Optional flags to pass the `traf` method of the xporta binary.
 
-The following excerpt from the PORTA documentation lists the valid flags and their behavior:
+The following excerpt from the PORTA documentation lists valid flags and their behavior:
 
         -p     Unbuffered redirection of terminal messages into  file filename_'.prt'
 

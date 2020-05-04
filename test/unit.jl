@@ -1,10 +1,8 @@
-using Test
+using Test, PORTA
 
 @testset "src/PORTA.jl" begin
 
-@testset "PORTA.POI()" begin
-    using PORTA: POI
-
+@testset "POI()" begin
     @testset "empty initialization" begin
         poi = POI()
 
@@ -72,9 +70,7 @@ using Test
     end
 end
 
-@testset "PORTA.IEQ()" begin
-    using PORTA: IEQ
-
+@testset "IEQ()" begin
     @testset "empty initialization" begin
         null_ieq = IEQ()
 
