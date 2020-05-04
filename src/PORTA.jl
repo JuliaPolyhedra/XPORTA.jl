@@ -14,9 +14,8 @@ using PORTA_jll
 
 using Suppressor
 
-export run_xporta, traf
-export POI, IEQ
-export read_ieq, read_poi, write_ieq, write_poi
+export POI, IEQ # types
+export traf     # xporta methods
 
 # including local files
 include("./types.jl")

@@ -1,6 +1,6 @@
-# PORTA.jl
+# PORTA.jl (ALPHA)
 
-*A wrapper for [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl)*
+*A julia wrapper for the [PORTA](http://porta.zib.de/) software.*
 
 | Documentation | Test Coverage | Linux/Mac | Windows | FreeBSD |
 |:-------------:|:-------------:|:---------:|:-------:|:-------:|
@@ -10,12 +10,17 @@
 
 "[PORTA](http://porta.zib.de/) is a collection of [C] routines for analyzing polytopes and polyhedra. The polyhedra are either given as the convex hull of a set of points plus (possibly) the convex cone of a set of vectors, or as a system of linear equations and inequalities." -([porta.zib.de](http://porta.zib.de/)).
 
+## Documentation
+
+* The `PORTA.jl` documentation is published at [bdoolittle.github.io/PORTA.jl/dev/](https://bdoolittle.github.io/PORTA.jl/dev/).
+* PORTA documentation is easily accessible at [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta).
+* The original documentation is contained within the PORTA source code which may be downloaded from [porta.zib.de](http://porta.zib.de/).
+
 ## Acknowledgments
 
-This project is funded by grant : ...
-
-This project was made possible with Dr. Eric Chitambar' advisory and the general support of the Physics Department at University of Illinois Urbana-Champaign.
-
+`Porta.jl` was made possible by funding from  grant `<grant_number_tbd>`, the advisory
+of Dr. Eric Chitambar, and general support from the Physics Department at the
+University of Illinois Urbana-Champaign.
 
 ## Citing
 

@@ -7,7 +7,13 @@ function _test_runner()
 
         @testset "unit tests:" begin
             println("running unit tests.")
-            include("./unit.jl")
+            for test in readdir("./test/unit/")
+                # run only julia files in test directory
+                if occursin(r"^.*\.jl$", test)
+                    println("./unit/$test")
+                    include("./unit/$test")
+                end
+            end
         end
 
         @testset "integration tests:" begin
