@@ -152,7 +152,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                     elseif (rel_sign == "=") || (rel_sign == "==")
                         push!(equalities, data_vector)
                     end
-                else
+                elseif current_section ==  "VALID"
                     digit_matches = collect(eachmatch(r"\s*([+-])?\s*(\d+)(?!\))(?:/(\d+))?", line))
                     num_matches = length(digit_matches)
 
@@ -162,7 +162,20 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                         num = parse(Int, sign*regex.captures[2])
                         den = (regex.captures[3] === nothing) ? 1 : parse(Int, regex.captures[3])
 
-                        Rational(num, den)
+                        return Rational(num, den)
+                    end, digit_matches), (1,num_matches))
+
+                    push!(valid, point)
+                else
+                    digit_matches = collect(eachmatch(r"\s*([+-])?\s*(\d+)(?!\))", line))
+                    num_matches = length(digit_matches)
+
+                    # map makes col vectors reshape to be row vectors
+                    point = reshape( map(regex -> begin
+                        sign = (regex.captures[1] === nothing) ? "+" : regex.captures[1]
+                        num = parse(Int, sign*regex.captures[2])
+
+                        return num
                     end, digit_matches), (1,num_matches))
 
                     if current_section == "LOWER_BOUNDS"
@@ -171,8 +184,6 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                         push!(upper_bounds, point)
                     elseif current_section == "ELIMINATION_ORDER"
                         push!(elimination_order, point)
-                    elseif current_section == "VALID"
-                        push!(valid, point)
                     end
                 end
             end
@@ -183,7 +194,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
         end
 
         # for initializing empty IEQ fields
-        null_matrix = Array{Rational{Int}}(undef, 0, 0)
+        null_matrix = Array{Int}(undef, 0, 0)
 
         IEQ(
             inequalities = (length(inequalities) == 0) ? null_matrix : vcat(inequalities...),

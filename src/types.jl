@@ -98,41 +98,41 @@ The resulting matrix has ``M+1`` columns to capture both ``\alpha`` and ``\beta`
 A `DomainError` is thrown if the column dimension of fields is not equal.
 """
 struct IEQ{T}
+    valid :: Matrix{T}
     inequalities :: Matrix{T}
     equalities :: Matrix{T}
-    lower_bounds :: Matrix{T}
-    upper_bounds :: Matrix{T}
-    elimination_order :: Matrix{T}
-    valid :: Matrix{T}
+    lower_bounds :: Matrix{Int}
+    upper_bounds :: Matrix{Int}
+    elimination_order :: Matrix{Int}
     dim :: Int
     function IEQ(;
         inequalities::PortaMatrix = Array{Int}(undef,0,0),
         equalities::PortaMatrix = Array{Int}(undef,0,0),
-        lower_bounds::PortaMatrix = Array{Int}(undef,0,0),
-        upper_bounds::PortaMatrix =  Array{Int}(undef,0,0),
-        elimination_order::PortaMatrix =  Array{Int}(undef,0,0),
+        lower_bounds::Matrix{Int} = Array{Int}(undef,0,0),
+        upper_bounds::Matrix{Int} =  Array{Int}(undef,0,0),
+        elimination_order::Matrix{Int} =  Array{Int}(undef,0,0),
         valid::PortaMatrix = Array{Int}(undef,0,0)
     )
         # arguments may be converted to Rational
         eq_args = [inequalities, equalities]
-        point_args = [lower_bounds, upper_bounds, elimination_order, valid]
+        int_args = [lower_bounds, upper_bounds, elimination_order]
 
         # checking dimensions of inputs equality matrices have one extra column
         eq_dims = map(arg -> (size(arg)[2] == 0) ? 0 : size(arg)[2] - 1, eq_args)
-        point_dims = map(arg -> size(arg)[2], point_args)
-        max_dim = max(point_dims..., eq_dims...)
-        if !all(map(dim -> (dim == max_dim) || (dim == 0), [eq_dims..., point_dims...]))
+        valid_dims = size(valid)[2]
+        int_dims = map(arg -> size(arg)[2], int_args)
+        max_dim = max(int_dims..., eq_dims..., valid_dims)
+        if !all(map(dim -> (dim == max_dim) || (dim == 0), [eq_dims..., int_dims..., valid_dims]))
             throw(DomainError(max_dim, "dimension mismatch. The number of columns in each argument should the same (or zero)."))
         end
 
         # standardizing type across IEQ struc
         ieq_type = Int
-        ieq_args = [eq_args..., point_args...]
-        if !all(map( arg -> eltype(arg) <: Int, ieq_args))
+        rational_args = [valid, eq_args...]
+        if !all(map( arg -> eltype(arg) <: Int, rational_args))
             ieq_type = Rational{Int}
-            ieq_args = map( arg -> convert.(Rational{Int}, arg), ieq_args)
+            rational_args = map( arg -> convert.(Rational{Int}, arg), rational_args)
         end
-
-        new{ieq_type}(ieq_args..., max_dim)
+        new{ieq_type}(rational_args..., int_args..., max_dim)
     end
 end
