@@ -7,8 +7,9 @@ makedocs(;
         "Home" => "index.md",
         "User Guide" => "user_guide.md",
         "Internals" => [
+            "Wrapping PORTA" => "Internals/wrapping_porta.md",
             "File IO" => "Internals/file_io.md",
-            "Xporta" => "Internals/xporta.md",
+            "Binaries" => "Internals/binaries.md",
         ],
         "Development Guide" => "development_guide.md"
     ],
