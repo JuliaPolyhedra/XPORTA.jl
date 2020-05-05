@@ -1,5 +1,6 @@
 """
-PORTA methods accept integer or rational valued matrices. The `PortaMatrix` type simplifies notation.
+PORTA is a rational solver, its methods accept integer or rational valued matrices.
+`PortaMatrix` describes the union of these types to simplify notation.
 
     PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
 """
@@ -7,15 +8,27 @@ PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
 
 """
 The vertex representation of a polyhedron. This struct is analogous to PORTA files
-with the `.poi` extension. Constructor arguments are *optional*.
+with the `.poi` extension. Please refer to the [PORTA General File Format docs](https://github.com/bdoolittle/julia-porta/blob/master/README.md#general-file-format)
+for more information regarding the `.poi` file format.
 
-    POI(;vertices::PortaMatrix, rays::PortaMatrix)
+Constructor arguments are *optional*.
+
+    POI(;
+        vertices::PortaMatrix,
+        rays::PortaMatrix,
+        valid::PortaMatrix
+    )
+
+The `POI` struct can be initialized with either `Rational{Int}` or `Int` valued matrices.
+On construction, all matrix values are standardized. By default matrix elements are
+`Int`, if one field has `Rational{Int}` values then the entire `POI` struct will be
+converted to type `Rational{Int}`.
 
 Fields:
-* `conv_section`: each matrix row is a vertex.
-* `cone_section`: each matrix row is a ray.
-* `valid`:  a feasible point for the vertex representation.
-* `dim`: the dimension of vertices and rays. This field is auto-populated on construction.
+* `conv_section` - each matrix row is a vertex.
+* `cone_section` - each matrix row is a ray.
+* `valid` -  a feasible point for the vertex representation.
+* `dim` - the dimension of vertices and rays. This field is auto-populated on construction.
 
 A `DomainError` is thrown if the column dimension of rays and vertices is not equal.
 """
@@ -51,15 +64,18 @@ struct POI{T}
 end
 
 @doc raw"""
-The intersecting halfspaces representation of a polyhedron. This struct is analogous
-to PORTA files with the `.ieq` extension. Constructor arguments are *optional*.
+The intersecting halfspace representation of a polyhedron. This struct is analogous
+to PORTA files with the `.ieq` extension. Please refer to the [PORTA General File Format docs](https://github.com/bdoolittle/julia-porta/blob/master/README.md#general-file-format)
+for more information refarding the `.ieq` file format.
+
+Constructor arguments are *optional*.
 
     IEQ(;
         inequalities :: PortaMatrix,
         equalities :: PortaMatrix,
-        lower_bounds :: PortaMatrix,
-        upper_bounds :: PortaMatrix,
-        elimination_order :: PortaMatrix,
+        lower_bounds :: Matrix{Int},
+        upper_bounds :: Matrix{Int},
+        elimination_order :: Matrix{Int},
         valid :: PortaMatrix
     )
 
@@ -71,19 +87,28 @@ converted to type `Rational{Int}`.
 Constructor arguments `inequalities` and `equalities` each represent a linear system
 of the following form.
 
-``
+```math
 \begin{bmatrix}
 \alpha_{1,1} & \dots & \alpha_{1,M} \\ \vdots & \ddots & \vdots \\ \alpha_{N,1} & \dots & \alpha_{N,M}
 \end{bmatrix}\begin{bmatrix}
 x_1 \\ \vdots \\ x_N
 \end{bmatrix} \leq \text{ or } =
 \begin{bmatrix} \beta_1 \\ \vdots \\ \beta_N \end{bmatrix}
-``
+```
 
-Each matrix row is populated by a vector ``\vec{\alpha}`` with length ``M`` denoting
-the left hand side of the above equation. The right hand side of the in/equality,
-``\beta_i``, is the last element of the `inequalities` and `equalities` matrices.
-The resulting matrix has ``M+1`` columns to capture both ``\alpha`` and ``\beta``.
+Each matrix row represents a separate linear in/equality. The right-hand-side of
+each in/equality is described by a  vector ``\vec{\alpha}_i`` with length ``M`` and
+the right-hand-side is described with a single value `\beta_i`, where ``i\in{1,...,N}``.
+
+In the `.ieq` format, columnn vector ``\vec{\beta}`` is concatenated to the right
+side of the ``\alpha`` matrix. In the `IEQ` struct, `inequalities` and `equalities`
+both have the following form.
+
+```math
+\begin{bmatrix}
+\alpha_{1,1} & \dots & \alpha_{1,M} & \beta_1 \\ \vdots & \ddots & \vdots & \vdots \\ \alpha_{N,1} & \dots & \alpha_{N,M} & \beta_N
+\end{bmatrix}
+```
 
 `IEQ` Fields:
 * `inequalities`: each matrix row is a linear inequality, the first M elements indexed `1:(end-1)` are α ad the last element indexed `end` is β.

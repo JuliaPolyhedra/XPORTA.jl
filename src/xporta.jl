@@ -2,8 +2,9 @@
     run_xporta( method_flag::String, args::Array{String,1}; verbose::Bool = false)
 
 !!! warning
-    This method is intended for advanced use of the xporta binaries. User knowledge
-    of flags and arguments is required for successful execution.
+    This method is intended for advanced use of the xporta binary. User knowledge
+    of flags and arguments is required for successful execution. Furthermore, users
+    must explicitly handle file IO for the xporta binary. 
 
 Runs the xporta binary through `PORTA_jll`. The `method_flag` argument tells the xporta
 binary which method to call. Valid options include:
@@ -32,9 +33,7 @@ function run_xporta(method_flag::String, args::Array{String,1}; verbose::Bool=fa
 end
 
 """
-Transforms the vertex representation of a polyhedron into the intersecting
-half-space representation and vice verse. The `traf` method computes an `IEQ` struct
-given a `POI` struct,
+The `traf` method computes an `IEQ` struct given a `POI` struct,
 
     traf( poi::POI; kwargs... ) :: IEQ
 
@@ -48,8 +47,15 @@ where `kwargs` is shorthand for the following keyword arguments:
 * `dir :: String = "./"` - The directory in which to write files.
 * `filename :: String = "traf_tmp"`- The name of produced files
 * `opt_flag :: String = ""` - Optional flags to pass the `traf` method of the xporta binary.
+* `verbose :: Bool = false`- If true, PORTA will print progress to `STDOUT`.
 
-The following excerpt from the PORTA documentation lists valid flags and their behavior:
+!!! note "Temp Files"
+    By default files created by the PORTA binaries are deleted. When performing
+    longer computations with PORTA, it may be desirable to keep intermediate files.
+    Passing the argument `cleanup = false` will cause the `traf` method to write all
+    files to directroy `dir`.
+
+The following excerpt from the PORTA documentation lists valid optional flags and their behavior:
 
         -p     Unbuffered redirection of terminal messages into  file filename_'.prt'
 
@@ -69,12 +75,9 @@ The following excerpt from the PORTA documentation lists valid flags and their b
                storage requirements.  Note: Output values which exceed the 32-bit integer storage size
                are written in hexadecimal format (hex). Such hexadecimal format can not be reread as input.
 
-!!! note
-    By default files created by the `xporta` binary are deleted. For longer computations with
-    xporta, it may be desired that intermediate files are not deleted. Passing the argument
-    `cleanup = false` will cause the `traf` method to write all files to directroy `dir`.
+For more details regarding `traf` please refer to the [PORTA traf documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#traf).
 """
-function traf(poi::POI; dir::String="./", filename::String="traf_tmp", opt_flag::String="", cleanup::Bool=true) :: IEQ
+function traf(poi::POI; dir::String="./", filename::String="traf_tmp", opt_flag::String="", cleanup::Bool=true, verbose::Bool=false) :: IEQ
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
@@ -88,7 +91,7 @@ function traf(poi::POI; dir::String="./", filename::String="traf_tmp", opt_flag:
     file_path = write_poi(filename, poi, dir=poi_dir)
     push!(xporta_args, file_path)
 
-    run_xporta("-T", xporta_args)
+    run_xporta("-T", xporta_args, verbose=verbose)
 
     ieq = read_ieq(file_path * ".ieq")
 
@@ -99,11 +102,11 @@ function traf(poi::POI; dir::String="./", filename::String="traf_tmp", opt_flag:
     return ieq
 end
 
-function traf(ieq::IEQ; dir::String="./", filename::String="traf_tmp", opt_flag::String="", cleanup::Bool=true) :: POI
+function traf(ieq::IEQ; dir::String="./", filename::String="traf_tmp", opt_flag::String="", cleanup::Bool=true, verbose::Bool=false) :: POI
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid opt_flags argument. Valid options any ordering of '-poscvl' and substrings."))
+            throw(DomainError(opt_flags, "invalid opt_flags argument. Valid options any ordering of '-poscvl' and permuted substrings."))
         end
     end
 
@@ -112,7 +115,7 @@ function traf(ieq::IEQ; dir::String="./", filename::String="traf_tmp", opt_flag:
     file_path = write_ieq(filename, ieq, dir=ieq_dir)
     push!(xporta_args, file_path)
 
-    run_xporta("-T", xporta_args)
+    run_xporta("-T", xporta_args, verbose=verbose)
 
     poi = read_poi(file_path * ".poi")
 

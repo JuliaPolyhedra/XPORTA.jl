@@ -1,7 +1,7 @@
 """
     make_porta_tmp( dir::String = "./") :: String
 
-Creates the `<dir/>porta_tmp` directory and returns the `porta_tmp` path.
+Creates the `porta_tmp/` directory in directory `dir` and returns the `porta_tmp` path.
 """
 function make_porta_tmp(dir::String="./") :: String
     sep = occursin(r"/$", dir) ? "" : "/"

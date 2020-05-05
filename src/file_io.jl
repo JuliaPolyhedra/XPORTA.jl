@@ -1,7 +1,7 @@
 """
     read_poi( filepath::String ) :: POI{Rational{Int}}
 
-Creates a `POI` struct by parsing the provided `.poi` file. A `DomainError` is thrown
+Constructs a `POI` struct by parsing the provided `.poi` file. A `DomainError` is thrown
 if argument `filepath` does not end with the `.poi` extension.
 """
 function read_poi(filepath :: String)::POI{Rational{Int}}
@@ -77,7 +77,7 @@ end
 """
     read_ieq( filepath::String ) :: IEQ{Rational{Int}}
 
-Creates an `IEQ` struct by parsing the provided `.ieq` file. A `DomainError` is thrown
+Constructs an `IEQ` struct by parsing the provided `.ieq` file. A `DomainError` is thrown
 if argument `filepath` does not end with the `.ieq` extension.
 """
 function read_ieq(filepath::String)::IEQ{Rational{Int}}
@@ -210,7 +210,7 @@ end
 """
     write_poi(filename::String, poi::POI; dir::String="./") :: String
 
-Creates a `.poi` file, `dir/filename.poi`, from the provided `POI`. If `filename`
+Writes a `.poi` file, `dir/filename.poi`, from the provided `POI`. If `filename`
 does not explicitly have the `.poi` extension, it will automatically be added. The
 method returns the complete file path for the created file, `dir/filename.poi`.
 """
@@ -249,7 +249,7 @@ end
 """
     write_ieq( filename::String, ieq::IEQ; dir::String="./") :: String
 
-Creates an `.ieq` file, `dir/filename.ieq`, from the provided `IEQ` struct. If
+Writes an `.ieq` file, `dir/filename.ieq`, from the provided `IEQ` struct. If
 `filename` does not explicitly contain the `.ieq` extension, it will be added
 automatically. The method returns the complete file path for the created file,
 `dir/filename.ieq`.

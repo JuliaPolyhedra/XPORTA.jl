@@ -15,7 +15,7 @@ julia> using Pkg; Pkg.add(PackageSpec(url="https://github.com/bdoolittle/PORTA.j
 
 ### 3-Simplex: Vertex Representation -> Halfspace Representation
 
-Given a set of vertices, PORTA can find the equivalent linear equalities and
+Given a set of vertices, PORTA can find the linear equalities and
 inequalities bounding the convex hull of vertices.
 
 Consider the vertices of the following 3-simplex (equilateral triangle).
@@ -32,10 +32,10 @@ v_3 = (0, 0, 1) \\
 \end{matrix}
 ```
 
-The vertices are in cartesian coordinates, ``v_i = (x_i, y_i, z_i)``, and the matrix
-on the right-hand-side is constructed by stacking each vertex as a row in the matrix.
+The vertices are cartesian coordinates, ``v_i = (x_i, y_i, z_i)``, and the right-hand-side
+matrix is constructed by stacking each vertex as a row in the matrix.
 
-The following code block demonstrates how to use PORTA.jl to compute the halfspace
+This code block demonstrates how to use PORTA.jl to compute the halfspace
 representation of the 3-simplex.
 
 ```@example
@@ -44,7 +44,7 @@ using PORTA
 # Construct the vertex representation (POI) of the 3-simplex.
 simplex_poi = POI(vertices = [1 0 0;0 1 0;0 0 1])
 
-# Compute the halfspace representation with traf().
+# Compute the halfspace representation (IEQ) with traf().
 simplex_ieq = traf(simplex_poi)
 
 # Print out the bounding linear equalities and inequalites.
@@ -68,7 +68,7 @@ y + z \leq 1 & \rightarrow & x \geq 0\\
 \end{matrix}
 ```
 
-The hand side is realized by applying the the normalization constraint and performing
+The right-hand-side is realized by applying the the normalization constraint and performing
 some algebra.
 
 !!! warning "PORTA is a Rational Solver"

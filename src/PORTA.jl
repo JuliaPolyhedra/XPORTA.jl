@@ -1,13 +1,13 @@
 """
-The main module of `PORTA.jl`. This package provides an interface to the
+The main module of PORTA.jl provides an interface to the
 [PORTA](http://porta.zib.de/) software. Exported types and methods are named
 historically after the PORTA source code.
 
 # Exports
 
-- [`POI`](@ref) - type, The vertex representation of a polyhedra.
-- [`IEQ`](@ref) - type, The intersecting halfspace representation of a polyhedra.
-- [`traf`](@ref) - method, Converts a `POI` -> `IEQ` or `IEQ` -> `POI`.
+- [`POI`](@ref) - Type, The vertex representation of a polyhedra.
+- [`IEQ`](@ref) - Type, The intersecting halfspace representation of a polyhedra.
+- [`traf`](@ref) - Method, Converts a `POI` -> `IEQ` or `IEQ` -> `POI`.
 
 The compiled PORTA binaries are accessed through [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl)
 

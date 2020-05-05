@@ -3,25 +3,22 @@
 ## PORTA -> PORTA.jl
 
 The julia ecosystem provides a convenient set of tools for cross-compiling C libraries.
-The process followed by `PORTA.jl` is outlined below:
+The process followed by PORTA.jl is outlined below.
 
-1. The PORTA source code is forked from the [github.com/denisrosset/porta](https://github.com/denisrosset/porta) repository to [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta). Forking the source enables:
+1. The PORTA source code is forked from the [github.com/denisrosset/porta](https://github.com/denisrosset/porta) repository to [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta). Forking the source allows:
     * Weblinks to be made directly from these docs to the [PORTA documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#porta-documentation).
     * Updates to be made to the GNU Makefile enabling cross-platform compilation.
     * Compilation errors to be fixed.
 
-
-2. The [BinaryBuilder.jl](https://github.com/JuliaPackaging/BinaryBuilder.jl) script is used to generate and test the cross-compilation [build script](https://github.com/JuliaPackaging/Yggdrasil/tree/master/P/PORTA) for PORTA.
+2. The [BinaryBuilder.jl](https://github.com/JuliaPackaging/BinaryBuilder.jl) script is used to generate and test the cross-compilation [build script for PORTA](https://github.com/JuliaPackaging/Yggdrasil/tree/master/P/PORTA).
     * The build script runs against a specific commit to the julia-porta repo ensuring that all users run the same PORTA binaries.
-    * The [`PORTA_jll.jl`](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl) module is auto-generated and published to the [JuliaBinaryWrappers](https://github.com/JuliaBinaryWrappers/) github repo.
+    * The [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl) module is auto-generated and published to the [JuliaBinaryWrappers](https://github.com/JuliaBinaryWrappers/) github repo.
 
-
-3. `PORTA_jll.jl` wraps the compiled PORTA binaries and executes the correct binary for the environment in which julia is running.
+3. PORTA_jll.jl wraps the compiled PORTA binaries and executes the correct binary for the environment in which julia is running.
     * Binaries are easily called through julia without requiring users to download or compile the source code.
-    * `PORTA_jll.jl` is not a complete wrapper because it lacks, testing, documentation and requires users to handle PORTA specific file IO tasks.
+    * PORTA_jll.jl is not a complete wrapper because it lacks, testing, documentation and requires users to handle PORTA specific file IO tasks.
 
-
-4. The `PORTA.jl` package is an easy-to-use interface for `PORTA_jll`.
+4. The PORTA.jl package provides an easy-to-use interface for PORTA_jll.jl.
     * The package handles cumbersome read/write tasks.
     * The package is well tested and documented.
 

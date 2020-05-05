@@ -25,7 +25,7 @@
 
 *"A collection of [C] routines for analyzing polytopes and polyhedra."* -([http://porta.zib.de](http://porta.zib.de/))
 
-[PORTA](http://porta.zib.de/) (POlyhedron Representation Transformation Algorithm) is a rational polyhedra solver.
+[PORTA](http://porta.zib.de/) (POlyhedron Representation Transformation Algorithm) is a rational polyhedral solver.
 Polyhedra are described either by the vertex representation or by the halfspace representation.
 For an introduction to PORTA and polyhedral theory please review [these slides.](http://co-at-work.zib.de/berlin2009/downloads/2009-09-22/2009-09-22-0900-CR-AW-Introduction-Porta-Polymake.pdf)
 
@@ -34,11 +34,22 @@ For an introduction to PORTA and polyhedral theory please review [these slides.]
 ## Contents
 
 ```@contents
-Pages = ["user_guide.md", "Internals/wrapping_porta.md", "Internals/file_io.md", "Internals/binaries.md", "development_guide.md"]
+Pages = ["user_guide.md", "exports.md", "Internals/wrapping_porta.md", "Internals/file_io.md", "Internals/binaries.md", "development_guide.md"]
 Depth = 1
 ```
 
 ## Index
 
+#### Exports
 ```@index
+Pages = ["exports.md"]
+```
+
+#### File IO
+```@index
+Pages = ["Internals/file_io.md"]
+```
+#### Binary Calls
+```@index
+Pages = ["Internals/binaries.md"]
 ```
