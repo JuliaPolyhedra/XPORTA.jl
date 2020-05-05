@@ -1,12 +1,9 @@
 """
-PORTA methods accept integer or rational valued matrices. The `PortaMatrix` and `PortaNumber` type simplifies notation.
+PORTA methods accept integer or rational valued matrices. The `PortaMatrix` type simplifies notation.
 
     PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
-
-    PortaNumber = Union{Int, Rational{Int}}
 """
 PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
-PortaNumber = Union{Int, Rational{Int}}
 
 """
 The vertex representation of a polyhedron. This struct is analogous to PORTA files
@@ -14,7 +11,7 @@ with the `.poi` extension. Constructor arguments are *optional*.
 
     POI(;vertices::PortaMatrix, rays::PortaMatrix)
 
-`POI` Fields:
+Fields:
 * `conv_section`: each matrix row is a vertex.
 * `cone_section`: each matrix row is a ray.
 * `valid`:  a feasible point for the vertex representation.
@@ -77,8 +74,9 @@ of the following form.
 ``
 \begin{bmatrix}
 \alpha_{1,1} & \dots & \alpha_{1,M} \\ \vdots & \ddots & \vdots \\ \alpha_{N,1} & \dots & \alpha_{N,M}
-\end{bmatrix}
-\leq \text{ or } =
+\end{bmatrix}\begin{bmatrix}
+x_1 \\ \vdots \\ x_N
+\end{bmatrix} \leq \text{ or } =
 \begin{bmatrix} \beta_1 \\ \vdots \\ \beta_N \end{bmatrix}
 ``
 
