@@ -31,6 +31,16 @@ For an introduction to PORTA and polyhedral theory please review [these slides.]
 
 **License:** GNU Public License (GPL).
 
+## Acknowledgments
+
+Development of Porta.jl was made possible by funding from  grant `<grant_number_tbd>`, the advisory
+of Dr. Eric Chitambar, and general support from the Physics Department at the
+University of Illinois Urbana-Champaign.
+
+## Citing
+
+See `PORTA_CITATION.bib` for the relevant reference(s).
+
 ## Contents
 
 ```@contents
