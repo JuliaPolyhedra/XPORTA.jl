@@ -1,27 +1,29 @@
 """
-    run_xporta( method_flag::String, args::String; suppress::Bool = true)
+    run_xporta( method_flag::String, args::Array{String,1}; verbose::Bool = false)
 
 !!! warning
     This method is intended for advanced use of the xporta binaries. User knowledge
     of flags and arguments is required for successful execution.
 
 Runs the xporta binary through `PORTA_jll`. The `method_flag` argument tells the xporta
-binary which submethod to call. Valid options include:
+binary which method to call. Valid options include:
 * `"-D"` runs the `dim` method
 * `"-F"` runs the `fmel` method
 * `"-S"` runs the `portsort` method
 * `"-T"` runs the `traf` method
 
-The `args` parameter is uniquely specified by submethod, for more information
-regarding methods see the [PORTA documentation](https://github.com/bdoolittle/julia-porta).
+The `args` parameter is uniquely specified by `method_flag`, for more information
+regarding methods and arguments see the [xporta documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#xporta).
+
+The `verbose` argument determines whether the xporta prints to `STDOUT`.
 """
-function run_xporta(method_flag::String, args::Array{String,1}; suppress::Bool=true)
+function run_xporta(method_flag::String, args::Array{String,1}; verbose::Bool=false)
     if !(method_flag in ["-D", "-F", "-S", "-T"])
         throw(DomainError(method_flag, "method_flag is invalid. Valid options are \"-D\", \"-F\", \"-S\", \"-T\"."))
     end
 
     xporta() do xporta_path
-        if suppress
+        if !verbose
             @suppress run(`$xporta_path $method_flag $args`)
         else
             run(`$xporta_path $method_flag $args`)

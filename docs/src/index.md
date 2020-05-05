@@ -4,19 +4,24 @@
 
 !!! note "Alpha Version"
     This software is a minimal viable product. Breaking changes to its
-    public and internal API will likely occur in future commits.  
+    public and internal API will likely occur in future commits.
+
+## PORTA.jl Features
+* Read/Write utilities for PORTA-specific files.
+* Handling of the file IO required by PORTA routines.
+* Comprehensive tests and documentation.
 
 ## Why Use PORTA.jl?
 
-**Reproducibility:**
-* Users all run the same PORTA binaries.
-
-**Ease-of-Use:**
+#### Ease-of-Use
 * No compilation of source code.
 * No required knowledge of the PORTA software.
 * No need to read/write files required by PORTA.
 
-## PORTA Overview
+#### Reproducibility
+* Users all run the same PORTA binaries.
+
+## PORTA Software
 
 *"A collection of [C] routines for analyzing polytopes and polyhedra."* -([http://porta.zib.de](http://porta.zib.de/))
 

@@ -6,6 +6,7 @@ makedocs(;
     pages=[
         "Home" => "index.md",
         "User Guide" => "user_guide.md",
+        "Exports" => "exports.md",
         "Internals" => [
             "Wrapping PORTA" => "Internals/wrapping_porta.md",
             "File IO" => "Internals/file_io.md",
