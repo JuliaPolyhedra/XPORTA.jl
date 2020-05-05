@@ -1,6 +1,6 @@
 # PORTA.jl (ALPHA)
 
-*A julia wrapper for the [PORTA](http://porta.zib.de/) polyhedra analysis software.*
+*A julia wrapper for the [PORTA](http://porta.zib.de/) polyhedral analysis software.*
 
 | Documentation | Test Coverage | Linux/Mac | Windows | FreeBSD |
 |:-------------:|:-------------:|:---------:|:-------:|:-------:|
@@ -8,13 +8,13 @@
 
 ## Documentation
 
-* The `PORTA.jl` documentation is published at [bdoolittle.github.io/PORTA.jl/dev/](https://bdoolittle.github.io/PORTA.jl/dev/).
+* The PORTA.jl documentation is published at [bdoolittle.github.io/PORTA.jl/dev/](https://bdoolittle.github.io/PORTA.jl/dev/).
 * PORTA documentation is easily accessible at [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta).
-* The original documentation is contained within the PORTA source code which may be downloaded from [porta.zib.de](http://porta.zib.de/).
+* The original PORTA source code may be downloaded from [http://porta.zib.de](http://porta.zib.de/).
 
 ## Acknowledgments
 
-Development of `Porta.jl` was made possible by funding from  grant `<grant_number_tbd>`, the advisory
+Development of Porta.jl was made possible by funding from  grant `<grant_number_tbd>`, the advisory
 of Dr. Eric Chitambar, and general support from the Physics Department at the
 University of Illinois Urbana-Champaign.
 
