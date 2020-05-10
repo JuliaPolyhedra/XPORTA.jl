@@ -16,10 +16,10 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
         current_section = ""
         dim = 0
 
-        # vertices and arrays will be accumulated
-        conv_section_vertices = []
-        cone_section_rays = []
-        valid_section = []
+        # vertices, rays, and valid points will be accumulated then concatenated
+        conv_section_rows = Array{Array{Rational{Int},2},1}(undef, 0)
+        cone_section_rows = Array{Array{Rational{Int},2},1}(undef, 0)
+        valid_rows = Array{Array{Rational{Int},2},1}(undef, 0)
 
         # reading file line by line
         for line in lines
@@ -52,11 +52,11 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
                 end, digit_matches), (1,num_matches))
 
                 if current_section == "CONV_SECTION"
-                    push!(conv_section_vertices, point)
+                    push!(conv_section_rows, point)
                 elseif current_section == "CONE_SECTION"
-                    push!(cone_section_rays, point)
+                    push!(cone_section_rows, point)
                 elseif current_section == "VALID"
-                    push!(valid_section, point)
+                    push!(valid_rows, point)
                 end
             end
 
@@ -66,9 +66,9 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
         end
 
         null_matrix = Array{Rational{Int}}(undef, 0, 0)
-        vertices = (length(conv_section_vertices) == 0) ? null_matrix : vcat(conv_section_vertices...)
-        rays = (length(cone_section_rays) == 0) ? null_matrix : vcat(cone_section_rays...)
-        valid = (length(valid_section) == 0) ? null_matrix : vcat(valid_section...)
+        vertices = (length(conv_section_rows) == 0) ? null_matrix : vcat(conv_section_rows...)
+        rays = (length(cone_section_rows) == 0) ? null_matrix : vcat(cone_section_rows...)
+        valid = (length(valid_rows) == 0) ? null_matrix : vcat(valid_rows...)
 
         POI(vertices=vertices, rays=rays, valid=valid)
     end
@@ -92,13 +92,13 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
         current_section = ""
         dim = 0
 
-        # vertices and arrays will be accumulated
-        inequalities = []
-        equalities  = []
-        upper_bounds = []
-        lower_bounds = []
-        elimination_order = []
-        valid = []
+        # in/equalites, bounds, etc. rows will be accumulated and concatenated
+        inequality_rows = Array{Array{Rational{Int},2},1}(undef, 0)
+        equality_rows  = Array{Array{Rational{Int},2},1}(undef, 0)
+        upper_bounds_row = Array{Array{Int,2},1}(undef, 0)
+        lower_bounds_row = Array{Array{Int,2},1}(undef, 0)
+        elimination_order_row = Array{Array{Int,2},1}(undef, 0)
+        valid_row = Array{Array{Rational{Int},2},1}(undef, 0)
 
         for line in lines
             # .ieq files are headed with DIM = <num_dimensions>
@@ -145,12 +145,12 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                     data_vector[end] = rhs_int
 
                     if (rel_sign == "<=") || (rel_sign == "=<")
-                        push!(inequalities, data_vector)
+                        push!(inequality_rows, data_vector)
                     elseif (rel_sign == ">=") || (rel_sign == "=>")
                         # if the lhs ≥ rhs then invert ≧ by multiplying by (-1).
-                        push!(inequalities, -1 .* data_vector)
+                        push!(inequality_rows, -1 .* data_vector)
                     elseif (rel_sign == "=") || (rel_sign == "==")
-                        push!(equalities, data_vector)
+                        push!(equality_rows, data_vector)
                     end
                 elseif current_section ==  "VALID"
                     digit_matches = collect(eachmatch(r"\s*([+-])?\s*(\d+)(?!\))(?:/(\d+))?", line))
@@ -165,7 +165,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                         return Rational(num, den)
                     end, digit_matches), (1,num_matches))
 
-                    push!(valid, point)
+                    push!(valid_row, point)
                 else
                     digit_matches = collect(eachmatch(r"\s*([+-])?\s*(\d+)(?!\))", line))
                     num_matches = length(digit_matches)
@@ -179,11 +179,11 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                     end, digit_matches), (1,num_matches))
 
                     if current_section == "LOWER_BOUNDS"
-                        push!(lower_bounds, point)
+                        push!(lower_bounds_row, point)
                     elseif current_section == "UPPER_BOUNDS"
-                        push!(upper_bounds, point)
+                        push!(upper_bounds_row, point)
                     elseif current_section == "ELIMINATION_ORDER"
-                        push!(elimination_order, point)
+                        push!(elimination_order_row, point)
                     end
                 end
             end
@@ -197,12 +197,12 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
         null_matrix = Array{Int}(undef, 0, 0)
 
         IEQ(
-            inequalities = (length(inequalities) == 0) ? null_matrix : vcat(inequalities...),
-            equalities = (length(equalities) == 0) ? null_matrix : vcat(equalities...),
-            upper_bounds = (length(upper_bounds) == 0) ? null_matrix : vcat(upper_bounds...),
-            lower_bounds = (length(lower_bounds) == 0) ? null_matrix : vcat(lower_bounds...),
-            elimination_order = (length(elimination_order) == 0) ? null_matrix : vcat(elimination_order...),
-            valid = (length(valid) == 0) ? null_matrix : vcat(valid...)
+            inequalities = (length(inequality_rows) == 0) ? null_matrix : vcat(inequality_rows...),
+            equalities = (length(equality_rows) == 0) ? null_matrix : vcat(equality_rows...),
+            upper_bounds = (length(upper_bounds_row) == 0) ? null_matrix : vcat(upper_bounds_row...),
+            lower_bounds = (length(lower_bounds_row) == 0) ? null_matrix : vcat(lower_bounds_row...),
+            elimination_order = (length(elimination_order_row) == 0) ? null_matrix : vcat(elimination_order_row...),
+            valid = (length(valid_row) == 0) ? null_matrix : vcat(valid_row...)
         )
     end
 end
