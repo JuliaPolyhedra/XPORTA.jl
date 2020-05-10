@@ -1,7 +1,7 @@
 name = "PORTA"
 uuid = "8c143463-af6f-456f-8aed-72447cb569d2"
 authors = ["Brian Doolittle"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 PORTA_jll = "c3fa2e09-48e0-5371-872a-ed3ac32dd1fc"

@@ -12,6 +12,10 @@
 * PORTA documentation is easily accessible at [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta).
 * The original PORTA source code may be downloaded from [http://porta.zib.de](http://porta.zib.de/).
 
+## Licensing
+
+PORTA and PORTA.jl are licensed under the GNU General Public License (GPL) v2.0.
+
 ## Acknowledgments
 
 Development of Porta.jl was made possible by funding from  grant `<grant_number_tbd>`, the advisory

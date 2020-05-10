@@ -3,12 +3,11 @@
 *A julia wrapper for the PORTA polyhedral analysis software.*
 
 !!! note "Alpha Version"
-    This software is a minimal viable product. Breaking changes to its
-    public and internal API will likely occur in future commits.
+    This software is a minimal viable product. Breaking changes may occur in future commits.
 
 ## PORTA.jl Features
 * Read/Write utilities for PORTA-specific files.
-* Handling of the file IO required by PORTA routines.
+* File IO handler for PORTA routines.
 * Comprehensive tests and documentation.
 
 ## Why Use PORTA.jl?
@@ -29,7 +28,10 @@
 Polyhedra are described either by the vertex representation or by the halfspace representation.
 For an introduction to PORTA and polyhedral theory please review [these slides.](http://co-at-work.zib.de/berlin2009/downloads/2009-09-22/2009-09-22-0900-CR-AW-Introduction-Porta-Polymake.pdf)
 
-**License:** GNU Public License (GPL).
+
+## Licensing
+
+PORTA and PORTA.jl are licensed under the GNU General Public License (GPL) v2.0.
 
 ## Acknowledgments
 
