@@ -29,7 +29,7 @@ Note: the `]` character invokes `Pkg` REPL `(@v#.#) pkg>`.
 #### Test Types
 
 * Unit Tests `test/unit/` - verify the behavior and logic of julia methods.
-* Integration Tests `test/integration` - verify file IO and binary behavior.
+* Integration Tests `test/integration` - verify file IO and binary execution.
 * Regression Tests `test/regression/` - verify the correctness of end-to-end functionality.
 
 ## Docs
@@ -37,13 +37,13 @@ Note: the `]` character invokes `Pkg` REPL `(@v#.#) pkg>`.
 All features should be documented. Documentation is created using the
 [Documenter.jl](https://juliadocs.github.io/Documenter.jl/stable/) framework.
 
-To locally build the docs locally, on the command line run
+To build docs locally, run
 
 ```
 $ julia docs/make.jl
 ```
 
-To locally host the docs website, navigate to the `/docs/build` directory and run
+To locally host the docs website, navigate to `/docs/build` and run
 
 ```
 $ python3 -m http.server --bind localhost

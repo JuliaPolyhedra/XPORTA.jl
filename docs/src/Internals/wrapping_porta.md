@@ -19,8 +19,6 @@ The process followed by PORTA.jl is outlined below.
     * PORTA_jll.jl is not a complete wrapper because it lacks, testing, documentation and requires users to handle PORTA specific file IO tasks.
 
 4. The PORTA.jl package provides an easy-to-use interface for PORTA_jll.jl.
-    * The package handles cumbersome read/write tasks.
-    * The package is well tested and documented.
 
 
 ## PORTA History

@@ -62,9 +62,9 @@ The inequalities represent positivity constraints on ``x``, ``y``, and ``z``.
 
 ```math
 \begin{matrix}
--y \leq 0 & \rightarrow & y \geq 0 \\
+-y \leq 0 &  & y \geq 0 \\
 -z \leq 0 & \rightarrow & z \geq 0 \\
-y + z \leq 1 & \rightarrow & x \geq 0\\
+y + z \leq 1 &  & x \geq 0\\
 \end{matrix}
 ```
 
@@ -72,5 +72,5 @@ The right-hand-side is realized by applying the the normalization constraint and
 some algebra.
 
 !!! warning "PORTA is a Rational Solver"
-    Methods accept matrices of type `Int` or `Rational{Int}`. Using matrices of type
-    `Float` or will result in a `TypeError` when constructing a `POI` or `IEQ`.
+    Methods accept matrices of type `Int` or `Rational{Int}`. All other types
+    will result in a `TypeError` when constructing a `POI` or `IEQ`.

@@ -18,10 +18,10 @@ PORTA and PORTA.jl are licensed under the GNU General Public License (GPL) v2.0.
 
 ## Acknowledgments
 
-Development of Porta.jl was made possible by funding from  grant `<grant_number_tbd>`, the advisory
-of Dr. Eric Chitambar, and general support from the Physics Department at the
-University of Illinois Urbana-Champaign.
+Development of Porta.jl was made possible by the advisory of Dr. Eric Chitambar
+and general support from the Physics Department at the University of Illinois
+Urbana-Champaign. Funding was provided by NSF Award 1914440.
 
 ## Citing
 
-See `PORTA_CITATION.bib` for the relevant reference(s).
+See `PORTA_CITATION.bib` for the relevant references.

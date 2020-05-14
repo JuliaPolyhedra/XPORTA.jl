@@ -4,7 +4,7 @@
 !!! warning
     This method is intended for advanced use of the xporta binary. User knowledge
     of flags and arguments is required for successful execution. Furthermore, users
-    must explicitly handle file IO for the xporta binary. 
+    must explicitly handle file IO for the xporta binary.
 
 Runs the xporta binary through `PORTA_jll`. The `method_flag` argument tells the xporta
 binary which method to call. Valid options include:
@@ -59,10 +59,10 @@ The following excerpt from the PORTA documentation lists valid optional flags an
 
         -p     Unbuffered redirection of terminal messages into  file filename_'.prt'
 
-        -o     Use  a heuristic to eliminate that variable  next,  for which the number of new inequalities is
-               minimal (local criterion). If this option is set, inequalities  which are  recognized  to  be
-               facet-inducing  for the finite linear system are printed into a  file as soon as they
-               are identified.
+        -o     Use  a heuristic to eliminate that variable  next,  for which the number of new
+               inequalities is minimal (local criterion). If this option is set, inequalities
+               which are  recognized  to  be facet-inducing  for the finite linear system
+               are printed into a  file as soon as they are identified.
 
         -c     Fourier-Motzkin elimination without using the rule  of Chernikov
 
@@ -70,10 +70,13 @@ The following excerpt from the PORTA documentation lists valid optional flags an
 
         -v     Printing a   table in the  output file which indicates strong validity
 
-        -l     Use  a  special  integer arithmetic allowing the integers to have arbitrary lengths. This
-               arithmetic is not as efficient as the system's integer arithmetic with respect to time and
-               storage requirements.  Note: Output values which exceed the 32-bit integer storage size
-               are written in hexadecimal format (hex). Such hexadecimal format can not be reread as input.
+        -l     Use  a  special  integer arithmetic allowing the integers to have arbitrary
+               lengths. This arithmetic is not as efficient as the system's integer
+               arithmetic with respect to time and storage requirements.
+
+               Note: Output values which exceed the 32-bit integer storage size
+               are written in hexadecimal format (hex). Such hexadecimal format
+               can not be reread as input.
 
 For more details regarding `traf` please refer to the [PORTA traf documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#traf).
 """

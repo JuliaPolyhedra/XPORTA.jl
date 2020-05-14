@@ -98,7 +98,7 @@ x_1 \\ \vdots \\ x_N
 
 Each matrix row represents a separate linear in/equality. The right-hand-side of
 each in/equality is described by a  vector ``\vec{\alpha}_i`` with length ``M`` and
-the right-hand-side is described with a single value `\beta_i`, where ``i\in{1,...,N}``.
+the right-hand-side is described with a single value ``\beta_i``, where ``i\in{1,...,N}``.
 
 In the `.ieq` format, columnn vector ``\vec{\beta}`` is concatenated to the right
 side of the ``\alpha`` matrix. In the `IEQ` struct, `inequalities` and `equalities`
@@ -111,8 +111,8 @@ both have the following form.
 ```
 
 `IEQ` Fields:
-* `inequalities`: each matrix row is a linear inequality, the first M elements indexed `1:(end-1)` are α ad the last element indexed `end` is β.
-* `equalities`: each matrix row is linear equality, the first M elements indexed `1:(end-1)` are α ad the last element indexed `end` is β.
+* `inequalities`: each matrix row is a linear inequality, the first M elements indexed `1:(end-1)` are α and the last element indexed `end` is β.
+* `equalities`: each matrix row is linear equality, the first M elements indexed `1:(end-1)` are α and the last element indexed `end` is β.
 * `lower_bounds`: each matrix row is a lower bound for enumerating integral points with `vint`.
 * `upper_bounds`: each matrix row is an upper bound for enumerating integral points with `vint`.
 * `valid`: a feasible point for the linear system.
