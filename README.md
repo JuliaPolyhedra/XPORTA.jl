@@ -8,9 +8,9 @@
 
 ## Documentation
 
-* The PORTA.jl documentation is published at [bdoolittle.github.io/PORTA.jl/dev/](https://bdoolittle.github.io/PORTA.jl/dev/).
+* PORTA.jl documentation is published at [bdoolittle.github.io/PORTA.jl/dev/](https://bdoolittle.github.io/PORTA.jl/dev/).
 * PORTA documentation is easily accessible at [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta).
-* The original PORTA source code may be downloaded from [http://porta.zib.de](http://porta.zib.de/).
+* PORTA source code may be downloaded from [http://porta.zib.de](http://porta.zib.de/).
 
 ## Licensing
 
