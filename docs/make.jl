@@ -14,11 +14,11 @@ makedocs(;
         ],
         "Development Guide" => "development_guide.md"
     ],
-    repo="https://github.com/bdoolittle/PORTA.jl/blob/{commit}{path}#L{line}",
+    repo="https://github.com/JuliaPolyhedra/PORTA.jl/blob/{commit}{path}#L{line}",
     sitename="PORTA.jl",
     authors="Brian Doolittle",
 )
 
 deploydocs(;
-    repo="github.com/bdoolittle/PORTA.jl.git",
+    repo="github.com/JuliaPolyhedra/PORTA.jl.git",
 )
