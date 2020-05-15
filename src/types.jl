@@ -48,14 +48,14 @@ struct POI{T}
         dims = map(arg -> size(arg)[2], args)
         max_dim = max(dims...) # should be equal except in case where one is null.
 
-        if !all(map(dim -> (dim == max_dim) || (dim == 0), dims))
+        if !all(dim -> (dim == max_dim) || (dim == 0), dims)
             throw(DomainError(dims, ": (dim_vertices, dim_rays, dim_valid), num_columns for vertices and rays must be equal."))
         end
 
         # standardizing type across POI struct
         poi_type = Int
         poi_args = args
-        if !all(map( arg -> eltype(arg) <: Int, poi_args))
+        if !all(arg -> eltype(arg) <: Int, poi_args)
             poi_type = Rational{Int}
             poi_args = map( arg -> convert.(Rational{Int}, arg), args)
         end
@@ -146,14 +146,14 @@ struct IEQ{T}
         valid_dims = size(valid)[2]
         int_dims = map(arg -> size(arg)[2], int_args)
         max_dim = max(int_dims..., eq_dims..., valid_dims)
-        if !all(map(dim -> (dim == max_dim) || (dim == 0), [eq_dims..., int_dims..., valid_dims]))
+        if !all(dim -> (dim == max_dim) || (dim == 0), [eq_dims..., int_dims..., valid_dims])
             throw(DomainError(max_dim, "dimension mismatch. The number of columns in each argument should the same (or zero)."))
         end
 
         # standardizing type across IEQ struc
         ieq_type = Int
         rational_args = [valid, eq_args...]
-        if !all(map( arg -> eltype(arg) <: Int, rational_args))
+        if !all(arg -> eltype(arg) <: Int, rational_args)
             ieq_type = Rational{Int}
             rational_args = map( arg -> convert.(Rational{Int}, arg), rational_args)
         end
