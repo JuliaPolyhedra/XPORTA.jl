@@ -39,7 +39,7 @@ function read_poi(filepath :: String)::POI{Rational{Int}}
 
             # if line contains a vertex/ray
             if occursin(r"^(\(\s*\d+\))?(\s*([+-])?\s*\d+)+", line)
-                digit_matches = collect(eachmatch(r"\s*([+-])?\s*(\d+)(?!\))(?:/(\d+))?", line))
+                digit_matches = collect(eachmatch(r"(?:\(\s*\d+\))?\s*([+-])?\s*(\d+)(?:\/(\d+))?", line))
                 num_matches = length(digit_matches)
 
                 # map makes col vectors reshape to be row vectors
@@ -123,7 +123,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
             if occursin(r"^(\(\s*\d+\))?(\s*[+-]?\s*[(\d+)x])+", line)
                 if (current_section == "INEQUALITIES_SECTION")
                     # match terms like -x8 or +x11
-                    lhs_matches = collect(eachmatch(r"([+-])\s*(?:(\d+)(?!\))(?:/(\d+))?)?x(\d+)", line))
+                    lhs_matches = collect(eachmatch(r"(?:\(\s*\d+\))?\s*([+-])\s*(?:(\d+)(?!\))(?:/(\d+))?)?x(\d+)", line))
 
                     # initializing empty vector
                     data_vector = zeros(Rational{Int}, (1,dim + 1))
@@ -153,7 +153,7 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                         push!(equality_rows, data_vector)
                     end
                 elseif current_section ==  "VALID"
-                    digit_matches = collect(eachmatch(r"\s*([+-])?\s*(\d+)(?!\))(?:/(\d+))?", line))
+                    digit_matches = collect(eachmatch(r"\s*([+-])?\s*(\d+)(?:/(\d+))?", line))
                     num_matches = length(digit_matches)
 
                     # map makes col vectors reshape to be row vectors

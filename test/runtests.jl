@@ -26,6 +26,16 @@ function _test_runner()
                end
            end
         end
+
+        @testset "regression tests:" begin
+            println("running regression tests.")
+            for test in readdir("./test/regression/")
+                if occursin(r"^.*\.jl$", test)
+                    println("./regression/$test")
+                    include("./regression/$test")
+                end
+            end
+        end
     end
 end
 
