@@ -8,7 +8,7 @@ CurrentModule = PORTA
 1. [Download and install julia](https://julialang.org/downloads/).
 2. Add the PORTA.jl package.
 ```julia
-julia> using Pkg; Pkg.add(PackageSpec(url="https://github.com/bdoolittle/PORTA.jl.git"))
+julia> using Pkg; Pkg.add("PORTA")
 ```
 
 ## Simple Example
