@@ -1,130 +1,42 @@
 """
-    run_xporta( method_flag::String, args::Array{String,1}; verbose::Bool = false)
+The main module of PORTA.jl provides an interface to the
+[PORTA](http://porta.zib.de/) software. Exported types and methods use
+historical names from the PORTA software.
 
-!!! warning
-    This method is intended for advanced use of the xporta binary. User knowledge
-    of flags and arguments is required for successful execution. Furthermore, users
-    must explicitly handle file IO for the xporta binary.
+# Exports
 
-Runs the xporta binary through `PORTA_jll`. The `method_flag` argument tells the xporta
-binary which method to call. Valid options include:
-* `"-D"` runs the `dim` method
-* `"-F"` runs the `fmel` method
-* `"-S"` runs the `portsort` method
-* `"-T"` runs the `traf` method
+- [`POI`](@ref) - *Type*, The vertex representation of a polyhedra.
+- [`IEQ`](@ref) - *Type*, The intersecting halfspace representation of a polyhedra.
+- [`traf`](@ref) - *Method*, Converts a `POI` -> `IEQ` or `IEQ` -> `POI`.
 
-The `args` parameter is uniquely specified by `method_flag`, for more information
-regarding methods and arguments see the [xporta documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#xporta).
+The compiled PORTA binaries are accessed through [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl)
 
-The `verbose` argument determines whether the xporta prints to `STDOUT`.
+!!! note "File IO and Temp Files"
+    The PORTA binaries use files to read and write data. PORTA.jl
+    writes the input to a temp file, runs the PORTA binary, and reads the
+    output from a file created by PORTA.
+
+    By default, all intermediate files are written to a `porta_tmp/` directory. At
+    the end of computation, data is returned to the user and `porta_tmp/`
+    is deleted. This functionality is intended to prevent the local filesystem
+    from becoming polluted with temp files.
+
+    Please note that in the case of failure `porta_tmp/` may not get deleted.
 """
-function run_xporta(method_flag::String, args::Array{String,1}; verbose::Bool=false)
-    if !(method_flag in ["-D", "-F", "-S", "-T"])
-        throw(DomainError(method_flag, "method_flag is invalid. Valid options are \"-D\", \"-F\", \"-S\", \"-T\"."))
-    end
+module XPORTA
 
-    xporta() do xporta_path
-        if !verbose
-            @suppress run(`$xporta_path $method_flag $args`)
-        else
-            run(`$xporta_path $method_flag $args`)
-        end
-    end
-end
+# Module we are wrapping
+using PORTA_jll
 
-"""
-The `traf` method computes an `IEQ` struct given a `POI` struct,
+using Suppressor
 
-    traf( poi::POI; kwargs... ) :: IEQ
+export POI, IEQ # types
+export traf     # xporta methods
 
-or computes the `POI` struct from the `IEQ` struct.
+# including local files
+include("./types.jl")
+include("./filesystem.jl") # utilities for create and removing directories
+include("./file_io.jl")    # read/write functionality
+include("./xporta_subroutines.jl")  # wrapper for the xporta binaries.
 
-    traf(ieq::IEQ; kwargs... ) :: POI
-
-where `kwargs` is shorthand for the following keyword arguments:
-
-* `cleanup :: Bool = true` - Remove created files after computation.
-* `dir :: String = "./"` - The directory in which to write files.
-* `filename :: String = "traf_tmp"`- The name of produced files
-* `opt_flag :: String = ""` - Optional flags to pass the `traf` method of the xporta binary.
-* `verbose :: Bool = false`- If true, PORTA will print progress to `STDOUT`.
-
-!!! note "Temp Files"
-    By default files created by the PORTA binaries are deleted. When performing
-    longer computations with PORTA, it may be desirable to keep intermediate files.
-    Passing the argument `cleanup = false` will cause the `traf` method to write all
-    files to directroy `dir`.
-
-The following excerpt from the PORTA documentation lists valid optional flags and their behavior:
-
-        -p     Unbuffered redirection of terminal messages into  file filename_'.prt'
-
-        -o     Use  a heuristic to eliminate that variable  next,  for which the number of new
-               inequalities is minimal (local criterion). If this option is set, inequalities
-               which are  recognized  to  be facet-inducing  for the finite linear system
-               are printed into a  file as soon as they are identified.
-
-        -c     Fourier-Motzkin elimination without using the rule  of Chernikov
-
-        -s     Appends a statistical  part  to  each  line  with  the number  of coefficients
-
-        -v     Printing a   table in the  output file which indicates strong validity
-
-        -l     Use  a  special  integer arithmetic allowing the integers to have arbitrary
-               lengths. This arithmetic is not as efficient as the system's integer
-               arithmetic with respect to time and storage requirements.
-
-               Note: Output values which exceed the 32-bit integer storage size
-               are written in hexadecimal format (hex). Such hexadecimal format
-               can not be reread as input.
-
-For more details regarding `traf` please refer to the [PORTA traf documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#traf).
-"""
-function traf(poi::POI; dir::String="./", filename::String="traf_tmp", opt_flag::String="", cleanup::Bool=true, verbose::Bool=false) :: IEQ
-    xporta_args = Array{String,1}(undef,0)
-    if opt_flag != ""
-        if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid opt_flags argument. Valid options any ordering of '-poscvl' and substrings."))
-        end
-        push!(xporta_args, opt_flag)
-    end
-
-    poi_dir = cleanup ? make_porta_tmp(dir) : dir
-
-    file_path = write_poi(filename, poi, dir=poi_dir)
-    push!(xporta_args, file_path)
-
-    run_xporta("-T", xporta_args, verbose=verbose)
-
-    ieq = read_ieq(file_path * ".ieq")
-
-    if (cleanup)
-        rm_porta_tmp(dir)
-    end
-
-    return ieq
-end
-
-function traf(ieq::IEQ; dir::String="./", filename::String="traf_tmp", opt_flag::String="", cleanup::Bool=true, verbose::Bool=false) :: POI
-    xporta_args = Array{String,1}(undef,0)
-    if opt_flag != ""
-        if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid opt_flags argument. Valid options any ordering of '-poscvl' and permuted substrings."))
-        end
-    end
-
-    ieq_dir = cleanup ? make_porta_tmp(dir) : dir
-
-    file_path = write_ieq(filename, ieq, dir=ieq_dir)
-    push!(xporta_args, file_path)
-
-    run_xporta("-T", xporta_args, verbose=verbose)
-
-    poi = read_poi(file_path * ".poi")
-
-    if (cleanup)
-        rm_porta_tmp(dir)
-    end
-
-    return poi
-end
+end # module

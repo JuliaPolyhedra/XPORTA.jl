@@ -1,6 +1,6 @@
 using Test, PORTA
 
-@testset "src/xporta.jl" begin
+@testset "src/xporta_subroutines.jl" begin
 
 dir = "./test/files/"
 
