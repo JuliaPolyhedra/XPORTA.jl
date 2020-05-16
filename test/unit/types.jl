@@ -1,6 +1,6 @@
-using Test, PORTA
+using Test, XPORTA
 
-@testset "src/PORTA.jl" begin
+@testset "src/XPORTA.jl" begin
 
 @testset "POI()" begin
     @testset "empty initialization" begin

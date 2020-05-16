@@ -1,5 +1,5 @@
 ```@meta
-CurrentModule = PORTA
+CurrentModule = XPORTA
 ```
 # File IO
 
@@ -21,7 +21,7 @@ write_ieq
 
 ## Temp Files (Default Usage)
 
-By default, PORTA.jl will create the `porta_tmp/` directory to which it will write
+By default, XPORTA.jl will create the `porta_tmp/` directory to which it will write
 all PORTA related files. At the end of computation, `porta_tmp/` and all of its
 contents are deleted.
 

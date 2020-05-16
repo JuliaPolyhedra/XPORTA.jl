@@ -1,4 +1,4 @@
-using Test, PORTA
+using Test, XPORTA
 
 @testset "src/xporta_subroutines.jl" begin
 
@@ -6,22 +6,22 @@ dir = "./test/files/"
 
 @testset "run_xporta()" begin
     @testset "throws DomainError if method_flag is not recognized" begin
-        @test_throws DomainError PORTA.run_xporta("-X", ["dir/example1.poi"])
+        @test_throws DomainError XPORTA.run_xporta("-X", ["dir/example1.poi"])
     end
 
     @testset "test traf (xporta -T) with example1.poi" begin
-        PORTA.rm_porta_tmp(dir)
-        PORTA.make_porta_tmp(dir)
+        XPORTA.rm_porta_tmp(dir)
+        XPORTA.make_porta_tmp(dir)
 
         # copy example files into porta_tmp to avoid mutation and creation
         ex1_poi_filepath = cp(dir*"example1.poi", dir*"porta_tmp/example1.poi")
 
         # run xporta
-        PORTA.run_xporta("-T", [ex1_poi_filepath])
+        XPORTA.run_xporta("-T", [ex1_poi_filepath])
 
         # verify that created .ieq file contains expected results
-        ieq1 = PORTA.read_ieq(ex1_poi_filepath*".ieq")
-        match_ieq1 = PORTA.read_ieq(dir*"example1.ieq")
+        ieq1 = XPORTA.read_ieq(ex1_poi_filepath*".ieq")
+        match_ieq1 = XPORTA.read_ieq(dir*"example1.ieq")
         @test ieq1.dim == match_ieq1.dim
         @test ieq1.inequalities == match_ieq1.inequalities
         @test ieq1.equalities == match_ieq1.equalities
@@ -30,33 +30,33 @@ dir = "./test/files/"
         @test ieq1.elimination_order == match_ieq1.elimination_order
         @test ieq1.valid == match_ieq1.valid
 
-        PORTA.rm_porta_tmp(dir)
+        XPORTA.rm_porta_tmp(dir)
     end
 
     @testset "test traf (xporta -T) with example2.ieq" begin
-        PORTA.rm_porta_tmp(dir)
-        PORTA.make_porta_tmp(dir)
+        XPORTA.rm_porta_tmp(dir)
+        XPORTA.make_porta_tmp(dir)
 
         ex2_ieq_filepath = cp(dir*"example2.ieq", dir*"porta_tmp/example2.ieq")
 
-        PORTA.run_xporta("-T", [ex2_ieq_filepath])
+        XPORTA.run_xporta("-T", [ex2_ieq_filepath])
 
         # reading .poi files
-        poi2 = PORTA.read_poi(ex2_ieq_filepath*".poi")
-        poi2_match = PORTA.read_poi(dir*"example2.poi")
+        poi2 = XPORTA.read_poi(ex2_ieq_filepath*".poi")
+        poi2_match = XPORTA.read_poi(dir*"example2.poi")
 
         @test poi2.dim == poi2_match.dim
         @test poi2.cone_section == poi2_match.cone_section
         @test poi2.conv_section == poi2_match.conv_section
         @test poi2.valid == poi2_match.valid
 
-        PORTA.rm_porta_tmp(dir)
+        XPORTA.rm_porta_tmp(dir)
     end
 end
 
 @testset "traf()" begin
     @testset "test cleanup true/false" begin
-        PORTA.rm_porta_tmp(dir)
+        XPORTA.rm_porta_tmp(dir)
         @test !isdir(dir*"porta_tmp")
         pre_dir_length = length(readdir(dir))
 
@@ -89,12 +89,12 @@ end
         rm(dir * "traf_test_cleanup.ieq.poi")
         @test pre_dir_length == length(readdir(dir))
 
-        PORTA.rm_porta_tmp(dir)
+        XPORTA.rm_porta_tmp(dir)
     end
 
     @testset "example1.poi" begin
-        ex1_poi = PORTA.read_poi(dir*"example1.poi")
-        ex1_ieq_match = PORTA.read_ieq(dir*"example1.ieq")
+        ex1_poi = XPORTA.read_poi(dir*"example1.poi")
+        ex1_ieq_match = XPORTA.read_ieq(dir*"example1.ieq")
 
         ex1_ieq = traf(ex1_poi, dir=dir)
 
@@ -108,8 +108,8 @@ end
     end
 
     @testset "example2.poi" begin
-        ex2_poi = PORTA.read_poi(dir*"example2.poi")
-        ex2_ieq_match = PORTA.read_ieq(dir*"example2.ieq")
+        ex2_poi = XPORTA.read_poi(dir*"example2.poi")
+        ex2_ieq_match = XPORTA.read_ieq(dir*"example2.ieq")
 
         ex2_ieq = traf(ex2_poi, dir=dir)
 
@@ -132,8 +132,8 @@ end
     end
 
     @testset "example1.ieq" begin
-        ex1_ieq = PORTA.read_ieq(dir*"example1.ieq")
-        ex1_poi_match = PORTA.read_poi(dir*"example1.poi")
+        ex1_ieq = XPORTA.read_ieq(dir*"example1.ieq")
+        ex1_poi_match = XPORTA.read_poi(dir*"example1.poi")
 
         ex1_poi = traf(ex1_ieq, dir=dir)
 
@@ -146,8 +146,8 @@ end
     end
 
     @testset "example2.ieq" begin
-        ex2_ieq = PORTA.read_ieq(dir*"example2.ieq")
-        ex2_poi_match = PORTA.read_poi(dir*"example2.poi")
+        ex2_ieq = XPORTA.read_ieq(dir*"example2.ieq")
+        ex2_poi_match = XPORTA.read_poi(dir*"example2.poi")
 
         ex2_poi = traf(ex2_ieq, dir=dir)
 

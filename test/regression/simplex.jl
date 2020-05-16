@@ -1,4 +1,4 @@
-using Test, LinearAlgebra, PORTA
+using Test, LinearAlgebra, XPORTA
 
 @testset "./test/regression/simplex.jl" begin
 

@@ -1,15 +1,15 @@
-# PORTA.jl
+# XPORTA.jl
 
 *A julia wrapper for the PORTA polyhedral analysis software.*
 
 !!! note "Alpha Version"
-    PORTA.jl is a minimal viable product. Breaking changes may occur in future commits.
+    XPORTA.jl is a minimal viable product. Breaking changes may occur in future commits.
 
-## PORTA.jl Features
+## XPORTA.jl Features
 * Read/Write utilities for PORTA files.
 * File IO handler for PORTA routines.
 
-## Why Use PORTA.jl?
+## Why Use XPORTA.jl?
 
 #### Ease-of-Use
 * No compilation of source code.
@@ -30,7 +30,7 @@ For an introduction to PORTA and polyhedral theory please review [these slides.]
 
 ## Licensing
 
-PORTA and PORTA.jl are licensed under the GNU General Public License (GPL) v2.0.
+PORTA and XPORTA.jl are licensed under the GNU General Public License (GPL) v2.0.
 
 ## Acknowledgments
 

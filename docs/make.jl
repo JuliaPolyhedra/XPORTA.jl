@@ -1,7 +1,7 @@
-using Documenter, PORTA
+using Documenter, XPORTA
 
 makedocs(;
-    modules=[PORTA],
+    modules=[XPORTA],
     format=Documenter.HTML(),
     pages=[
         "Home" => "index.md",
@@ -14,11 +14,11 @@ makedocs(;
         ],
         "Development Guide" => "development_guide.md"
     ],
-    repo="https://github.com/JuliaPolyhedra/PORTA.jl/blob/{commit}{path}#L{line}",
-    sitename="PORTA.jl",
+    repo="https://github.com/JuliaPolyhedra/XPORTA.jl/blob/{commit}{path}#L{line}",
+    sitename="XPORTA.jl",
     authors="Brian Doolittle",
 )
 
 deploydocs(;
-    repo="github.com/JuliaPolyhedra/PORTA.jl.git",
+    repo="github.com/JuliaPolyhedra/XPORTA.jl.git",
 )

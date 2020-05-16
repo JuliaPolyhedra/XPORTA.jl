@@ -1,4 +1,4 @@
-using Test, PORTA
+using Test, XPORTA
 
 @testset "./test/regression/clauser_horne_shimony_holt_polytope.jl" begin
 

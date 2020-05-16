@@ -1,9 +1,9 @@
 # Wrapping PORTA
 
-## PORTA -> PORTA.jl
+## PORTA -> XPORTA.jl
 
 The julia ecosystem provides a convenient set of tools for cross-compiling C libraries.
-The process followed by PORTA.jl is outlined below.
+The process followed by XPORTA.jl is outlined below.
 
 1. The PORTA source code is forked from the [github.com/denisrosset/porta](https://github.com/denisrosset/porta) repository to [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta). Forking the source allows:
     * Weblinks to be made directly from these docs to the [PORTA documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#porta-documentation).
@@ -18,7 +18,7 @@ The process followed by PORTA.jl is outlined below.
     * Binaries are easily called through julia without requiring users to download or compile the source code.
     * PORTA_jll.jl is not a complete wrapper because it lacks, testing, documentation and requires users to handle PORTA specific file IO tasks.
 
-4. The PORTA.jl package provides an easy-to-use interface for PORTA_jll.jl.
+4. The XPORTA.jl package provides an easy-to-use interface for PORTA_jll.jl.
 
 
 ## PORTA History

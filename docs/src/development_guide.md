@@ -8,7 +8,7 @@
 ## Contributing
 
 Please reach out to brian.d.doolittle@gmail.com if you are interested in making
-a contribution to PORTA.jl.
+a contribution to XPORTA.jl.
 
 ## Testing
 
@@ -21,7 +21,7 @@ $ julia test/runtests.jl
 or via `Pkg` (within the julia REPL),
 
 ```
-julia> ]test PORTA
+julia> ]test XPORTA
 ```  
 
 Note: the `]` character invokes `Pkg` REPL `(@v#.#) pkg>`.

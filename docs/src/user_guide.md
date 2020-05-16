@@ -1,14 +1,14 @@
 ```@meta
-CurrentModule = PORTA
+CurrentModule = XPORTA
 ```
 # User Guide
 
 ## Setup
 
 1. [Download and install julia](https://julialang.org/downloads/).
-2. Add the PORTA.jl package.
+2. Add the XPORTA.jl package.
 ```julia
-julia> using Pkg; Pkg.add("PORTA")
+julia> using Pkg; Pkg.add("XPORTA")
 ```
 
 ## Simple Example
@@ -35,11 +35,11 @@ v_3 = (0, 0, 1) \\
 The vertices are cartesian coordinates, ``v_i = (x_i, y_i, z_i)``, and the right-hand-side
 matrix is constructed by stacking each vertex as a row in the matrix.
 
-This code block demonstrates how to use PORTA.jl to compute the halfspace
+This code block demonstrates how to use XPORTA.jl to compute the halfspace
 representation of the 3-simplex.
 
 ```@example
-using PORTA
+using XPORTA
 
 # Construct the vertex representation (POI) of the 3-simplex.
 simplex_poi = POI(vertices = [1 0 0;0 1 0;0 0 1])

@@ -1,5 +1,5 @@
 """
-The main module of PORTA.jl provides an interface to the
+The main module of XPORTA.jl provides an interface to the
 [PORTA](http://porta.zib.de/) software. Exported types and methods use
 historical names from the PORTA software.
 
@@ -12,7 +12,7 @@ historical names from the PORTA software.
 The compiled PORTA binaries are accessed through [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl)
 
 !!! note "File IO and Temp Files"
-    The PORTA binaries use files to read and write data. PORTA.jl
+    The PORTA binaries use files to read and write data. XPORTA.jl
     writes the input to a temp file, runs the PORTA binary, and reads the
     output from a file created by PORTA.
 
