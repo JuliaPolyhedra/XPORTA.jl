@@ -1,7 +1,7 @@
 name = "PORTA"
 uuid = "8c143463-af6f-456f-8aed-72447cb569d2"
 authors = ["Brian Doolittle"]
-version = "0.1.1"
+version = "0.1.0"
 
 [deps]
 PORTA_jll = "c3fa2e09-48e0-5371-872a-ed3ac32dd1fc"
@@ -9,6 +9,7 @@ Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 
 [compat]
 julia = "1.4"
+Suppressor = "0.2.0"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
