@@ -1,0 +1,40 @@
+
+
+
+log for /home/travis/.julia/artifacts/b0627bab322e166a7ea3c9aa777f00551e7c4fdd/bin/xporta -T ./porta_tmp/traf_tmp.poi 
+
+input file ./porta_tmp/traf_tmp.poi o.k.
+dimension              :    3 
+number of cone-points  :    0 
+number of conv-points  :    3 
+
+GAUSS - ELIMINATION:
+| iter- |     # equa |  # ineq  |   max| long|   non- |     mem |  cpu-time | real-time |
+| ation |            |          |  bit-|arith|  zeros |    used |      used |      used |
+|       |            |          |length|metic|   in % |   in kB |    in sec |    in sec |
+|-------|------------|----------|------|-----|--------|---------|-----------|-----------|
+|     4 |          4 |        1 |    1 |   n |   0.38 |      41 |      0.00 |      0.00 |
+|     3 |          3 |        2 |    1 |   n |   0.40 |      41 |      0.00 |      0.00 |
+|     2 |          2 |        3 |    1 |   n |   0.44 |      41 |      0.00 |      0.00 |
+ variable 1 eliminated - finite equation found
+|     1 |          1 |        4 |    1 |   n |   0.56 |      41 |      0.00 |      0.00 |
+
+FOURIER - MOTZKIN - ELIMINATION:
+| iter- |      upper |  # ineq  |   max| long|   non- |     mem |  cpu-time | real-time |
+| ation |      bound |          |  bit-|arith|  zeros |    used |      used |      used |
+|       |     # ineq |          |length|metic|   in % |   in kB |    in sec |    in sec |
+|-------|------------|----------|------|-----|--------|---------|-----------|-----------|
+
+sum of inequalities over all iterations :      0
+maximal number of inequalities          :      0
+
+transformation to integer values 
+sorting system 
+transformation to integer values 
+sorting system 
+
+number of equations    :    1 
+number of inequalities :    3 
+
+output written to file ./porta_tmp/traf_tmp.poi.ieq
+
