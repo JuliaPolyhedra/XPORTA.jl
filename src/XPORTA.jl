@@ -37,6 +37,7 @@ export traf     # xporta methods
 include("./types.jl")
 include("./filesystem.jl") # utilities for create and removing directories
 include("./file_io.jl")    # read/write functionality
-include("./xporta_subroutines.jl")  # wrapper for the xporta binaries.
+include("./xporta_subroutines.jl") # wrapper for the xporta binaries.
+include("./valid_subroutines.jl") # wrapper for the valid binaries
 
 end # module

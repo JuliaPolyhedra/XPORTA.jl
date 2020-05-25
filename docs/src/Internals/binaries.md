@@ -15,5 +15,6 @@ run_xporta
 
 ## valid
 
-!!! danger "Not Implemented"
-    Please reach out if you are interested in the `valid` subroutines.
+```@docs
+run_valid
+```
