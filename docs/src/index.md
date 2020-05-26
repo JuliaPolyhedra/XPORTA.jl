@@ -34,7 +34,7 @@ PORTA and XPORTA.jl are licensed under the GNU General Public License (GPL) v2.0
 
 ## Acknowledgments
 
-Development of Porta.jl was made possible by the advisory
+Development of XPORTA.jl was made possible by the advisory
 of Dr. Eric Chitambar and general support from the Physics Department at the
 University of Illinois Urbana-Champaign. Funding was provided by NSF Award 1914440.
 

@@ -8,6 +8,7 @@ historical names from the PORTA software.
 - [`POI`](@ref) - *Type*, The vertex representation of a polyhedra.
 - [`IEQ`](@ref) - *Type*, The intersecting halfspace representation of a polyhedra.
 - [`traf`](@ref) - *Method*, Converts a `POI` -> `IEQ` or `IEQ` -> `POI`.
+- [`posie`](@ref) - *Method*, Enumerates the points and rays of a `POI` which satisfy the linear system of an `IEQ`.
 
 The compiled PORTA binaries are accessed through [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl)
 
@@ -32,7 +33,7 @@ using Suppressor
 
 export POI, IEQ # types
 export traf     # xporta methods
-export fctp     # valid methods
+export fctp, iespo, posie     # valid methods
 
 # including local files
 include("./types.jl")

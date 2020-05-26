@@ -43,17 +43,11 @@ or computes the `POI` struct from the `IEQ` struct.
 
 where `kwargs` is shorthand for the following keyword arguments:
 
-* `cleanup :: Bool = true` - Remove created files after computation.
 * `dir :: String = "./"` - The directory in which to write files.
-* `filename :: String = "traf_tmp"`- The name of produced files
+* `filename :: String = "traf_tmp"`- The name of produced files.
+* `cleanup :: Bool = true` - If `true`, created files are removed after computation.
 * `opt_flag :: String = ""` - Optional flags to pass the `traf` method of the xporta binary.
-* `verbose :: Bool = false`- If true, PORTA will print progress to `STDOUT`.
-
-!!! note "Temp Files"
-    By default files created by the PORTA binaries are deleted. When performing
-    longer computations with PORTA, it may be desirable to keep intermediate files.
-    Passing the argument `cleanup = false` will cause the `traf` method to write all
-    files to directroy `dir`.
+* `verbose :: Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
 
 The following excerpt from the PORTA documentation lists valid optional flags and their behavior:
 
@@ -80,7 +74,13 @@ The following excerpt from the PORTA documentation lists valid optional flags an
 
 For more details regarding `traf` please refer to the [PORTA traf documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#traf).
 """
-function traf(poi::POI; dir::String="./", filename::String="traf_tmp", opt_flag::String="", cleanup::Bool=true, verbose::Bool=false) :: IEQ
+function traf(poi::POI;
+    dir::String="./",
+    filename::String="traf_tmp",
+    opt_flag::String="",
+    cleanup::Bool=true,
+    verbose::Bool=false
+) :: IEQ{Rational{Int}}
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
