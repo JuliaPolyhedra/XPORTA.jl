@@ -69,6 +69,66 @@ function posie(ieq::IEQ, poi::POI;
     return valid_poi
 end
 
+function fctp( inequalities::PortaMatrix, poi::POI;
+    dir::String="./",
+    filename::String="fctp_tmp",
+    cleanup::Bool=true,
+    verbose::Bool=false
+) :: Dict{ String, Dict{Int, POI{Rational{Int}}} }
+
+    workdir = cleanup ? make_porta_tmp(dir) : dir
+
+    ieq_filepath = write_ieq(filename, IEQ(inequalities=inequalities), dir=workdir)
+    poi_filepath = write_poi(filename, poi, dir=workdir)
+
+    run_valid("-C", [ieq_filepath, poi_filepath], verbose=verbose)
+
+    poi_files = filter(file -> occursin(r"^.*\.ieq\d+\.poi$", file), readdir(workdir))
+
+    tight_poi_tuples = Vector{Tuple{Int, POI{Rational{Int}}}}(undef, 0)
+    invalid_poi_tuples = Vector{Tuple{Int, POI{Rational{Int}}}}(undef, 0)
+    for i in 1:length(poi_files)
+
+        poi_match = match(r"^.*\.ieq(\d+).poi$", poi_files[i])
+
+        ineq_id = parse(Int, poi_match.captures[1])
+        poi = read_poi(workdir * "/" * poi_files[i])
+
+        poi_contains_points = (length(poi.conv_section) == 0) ? false : true
+        poi_contains_rays = (length(poi.cone_section) == 0) ? false : true
+
+        ineq = inequalities[ineq_id,:]
+
+        if poi_contains_points
+            if ineq[1:end-1]' * poi.conv_section[1,:] == ineq[end]
+                push!(tight_poi_tuples, (ineq_id, poi))
+            else
+                push!(invalid_poi_tuples, (ineq_id, poi))
+            end
+        elseif poi_contains_rays
+            if ineq[1:end-1]' * poi.cone_section[1,:] <= 0
+                push!(tight_poi_tuples, (ineq_id, poi))
+            else
+                push!(invalid_poi_tuples, (ineq_id, poi))
+            end
+        end
+   end
+
+    if (cleanup)
+        rm_porta_tmp(dir)
+    end
+
+    tight_poi_dict = Dict{Int, POI{Rational{Int}}}(tight_poi_tuples)
+    invalid_poi_dict = Dict{Int, POI{Rational{Int}}}(invalid_poi_tuples)
+
+    Dict{String, Dict{Int, POI{Rational{Int}}}}(
+        "valid" => tight_poi_dict,
+        "invalid" => invalid_poi_dict
+    )
+end
+
+"""
+"""
 function iespo(ieq::IEQ, poi::POI;
     dir::String="./",
     filename::String="iespo_tmp",
@@ -100,39 +160,4 @@ function iespo(ieq::IEQ, poi::POI;
     end
 
     return valid_ieq
-end
-
-function fctp( inequalities::PortaMatrix, poi::POI;
-    dir::String="./",
-    filename::String="fctp_tmp",
-    cleanup::Bool=true,
-    verbose::Bool=false
-) :: Dict{Int, POI{Rational{Int}}}
-
-    workdir = cleanup ? make_porta_tmp(dir) : dir
-
-    ieq_filepath = write_ieq(filename, IEQ(inequalities=inequalities), dir=workdir)
-    poi_filepath = write_poi(filename, poi, dir=workdir)
-
-    run_valid("-C", [ieq_filepath, poi_filepath], verbose=verbose)
-
-    poi_files = filter(file -> occursin(r"^.*\.ieq\d+\.poi$", file), readdir(workdir))
-
-    poi_tuples = Vector{Tuple{Int, POI{Rational{Int}}}}(undef, length(poi_files))
-    for i in 1:length(poi_files)
-        println(poi_files[i])
-
-        poi_match = match(r"^.*\.ieq(\d+).poi$", poi_files[i])
-
-        ineq_id = parse(Int, poi_match.captures[1])
-        poi = read_poi(workdir * "/" * poi_files[i])
-
-        poi_tuples[i] = (ineq_id, poi)
-   end
-
-    if (cleanup)
-        rm_porta_tmp(dir)
-    end
-
-    Dict{Int, POI{Rational{Int}}}(poi_tuples)
 end

@@ -10,54 +10,6 @@ dir = "./test/files/"
     end
 end
 
-@testset "iespo()" begin
-    @testset "valid in/equalities for a simple 3-simplex" begin
-        simplex_poi = POI(vertices=[1 0 0;0 1 0;0 0 1])
-
-        @testset "tight in/equalities are all valid" begin
-            ieq = IEQ(inequalities = [-1 0 0 0; 0 -1 0 0; 0 0 -1 0], equalities = [1 1 1 1])
-
-            valid_ieq = iespo(ieq, simplex_poi, dir=dir)
-
-            @test ieq.inequalities == valid_ieq.inequalities
-            @test ieq.equalities == valid_ieq.equalities
-        end
-
-        @testset "loose upper bounds inequalities" begin
-            ieq = IEQ(inequalities = [-1 0 0 1; 0 -1 0 1; 0 0 -1 1], equalities = [1 1 1 1])
-
-            valid_ieq = iespo(ieq, simplex_poi, dir=dir)
-
-            @test ieq.inequalities == valid_ieq.inequalities
-            @test ieq.equalities == valid_ieq.equalities
-        end
-
-        @testset "tight inequalities invalid equality" begin
-            ieq = IEQ(inequalities = [-1 0 0 0; 0 -1 0 0; 0 0 -1 0], equalities = [1 1 1 2])
-
-            valid_ieq = iespo(ieq, simplex_poi, dir=dir)
-
-            @test ieq.inequalities == valid_ieq.inequalities
-            @test ieq.equalities == valid_ieq.equalities
-        end
-
-        @testset "invalid inequality among valid inequalities" begin
-            ieq = IEQ(inequalities = [-1 0 0 -2; 0 -1 0 0; 0 0 -1 0], equalities = [1 1 1 2])
-
-            valid_ieq = iespo(ieq, simplex_poi, dir=dir, cleanup=false, verbose=true)
-
-            @test ieq.inequalities == valid_ieq.inequalities
-            @test ieq.equalities == valid_ieq.equalities
-        end
-
-        valid_ieq = iespo(
-            IEQ(inequalities = [-1 0 0 1; 0 -1 0 0; 0 0 -1 0],equalities = [1 1 1 1]),
-            simplex_poi, dir=dir, cleanup=false, opt_flag = "-v")
-
-
-    end
-end
-
 @testset "posie()" begin
     @testset "valid in/equalities for a simple 3-simplex" begin
         simplex_ieq = IEQ(inequalities = [-1 0 0 0; 0 -1 0 0; 0 0 -1 0], equalities = [1 1 1 1])
@@ -125,29 +77,152 @@ end
             -1 1 1; -1 1 -1; -1 -1 1; -1 -1 -1;
         ])
 
-        @testset "single tight facet" begin
+        @testset "single tight facet returns points on facet" begin
             poi_dict = fctp([0 0 1 1], cube_poi, dir=dir)
-            @test length(poi_dict) == 1
-            @test collect(keys(poi_dict)) == [1]
-            @test poi_dict[1].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
+
+            @test collect(keys(poi_dict)) == ["valid", "invalid"]
+            @test collect(keys(poi_dict["valid"])) == [1]
+            @test poi_dict["valid"][1].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
+            @test length(poi_dict["invalid"]) == 0
         end
 
-        @testset "single loose upper bound facet" begin
+        @testset "single loose upper bound facet will return nothing" begin
             poi_dict = fctp([0 0 1 2], cube_poi, dir=dir)
-            @test length(poi_dict) == 0
+            @test length(poi_dict["valid"]) == 0
+            @test length(poi_dict["invalid"]) == 0
         end
 
         @testset "invalid facet for polytope returns violating points" begin
             poi_dict = fctp([0 0 1 1//2], cube_poi, dir=dir)
-            @test length(poi_dict) == 1
-            @test collect(keys(poi_dict)) == [1]
-            @test poi_dict[1].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
+            @test length(poi_dict["valid"]) == 0
+            @test length(poi_dict["invalid"]) == 1
+            @test collect(keys(poi_dict["invalid"])) == [1]
+            @test poi_dict["invalid"][1].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
         end
 
-        poi_dict = fctp([0 0 1 2;0 0 1 1], cube_poi, dir=dir)
-        @test length(poi_dict) == 1
-        @test collect(keys(poi_dict)) == [2]
-        @test poi_dict[2].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
+        @testset "loose, tight, and invalid facet" begin
+            poi_dict = fctp([0 0 1 2;0 0 1 1;0 0 1 1//2], cube_poi, dir=dir)
+            @test length(poi_dict["valid"]) == 1
+            @test poi_dict["valid"][2].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
+            @test poi_dict["invalid"][3].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
+        end
+    end
+
+    @testset "square cone" begin
+        square_cone_rays = [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
+        square_cone_poi = POI(rays=square_cone_rays)
+
+        @testset "tight bounds" begin
+            inequalities = [0 1 -1 0;1 0 -1 0;-1 0 -1 0;0 -1 -1 0]
+
+            poi_dict = fctp(inequalities, square_cone_poi, dir=dir)
+
+            @test length(poi_dict["valid"]) == 4
+
+            @test poi_dict["valid"][1].cone_section == vcat(square_cone_rays[1,:]',square_cone_rays[3,:]')
+            @test poi_dict["valid"][2].cone_section == vcat(square_cone_rays[1,:]',square_cone_rays[2,:]')
+            @test poi_dict["valid"][3].cone_section == vcat(square_cone_rays[3,:]',square_cone_rays[4,:]')
+            @test poi_dict["valid"][4].cone_section == vcat(square_cone_rays[2,:]',square_cone_rays[4,:]')
+
+            @test length(poi_dict["invalid"]) == 0
+        end
+
+        @testset "positive z halfspace" begin
+            poi_dict = fctp([0 0 -1 0], square_cone_poi, dir=dir)
+
+            @test length(poi_dict["valid"]) == 0
+            @test length(poi_dict["invalid"]) == 0
+        end
+
+        @testset "loose positive z halfspace" begin
+            poi_dict = fctp([0 0 -1 1], square_cone_poi, dir=dir)
+
+            @test length(poi_dict["valid"]) == 0
+            @test length(poi_dict["invalid"]) == 0
+        end
+
+        @testset "loose parallel bound" begin
+            poi_dict = fctp([0 1 -1 1], square_cone_poi, dir=dir)
+
+            @test length(poi_dict["invalid"]) == 0
+            @test poi_dict["valid"][1].cone_section == [1 1 1;-1 1 1]
+        end
+
+        @testset "loose bound non-parallel" begin
+            poi_dict = fctp([0 1 -2 0], square_cone_poi, dir=dir)
+
+            @test length(poi_dict["invalid"]) == 0
+            @test length(poi_dict["valid"]) == 0
+        end
+
+        @testset "excluding bound" begin
+            poi_dict = fctp([0 2 -1 0], square_cone_poi, dir=dir)
+
+            @test length(poi_dict["valid"]) == 0
+            @test length(poi_dict["invalid"]) == 1
+            @test poi_dict["invalid"][1].cone_section == [1 1 1;-1 1 1]
+        end
+
+        @testset "excluding, loose, and tight bounds" begin
+            poi_dict = fctp([0 2 -1 0;0 0 -1 1;0 -1 -1 0], square_cone_poi, dir=dir)
+
+            @test length(poi_dict["valid"]) == 1
+            @test length(poi_dict["invalid"]) == 1
+
+            @test poi_dict["valid"][3].cone_section == [1 -1 1;-1 -1 1]
+            @test poi_dict["invalid"][1].cone_section == [1 1 1;-1 1 1]
+        end
+    end
+end
+
+@testset "XPORTA.iespo()" begin
+
+    @testset "invalid opt_flag" begin
+        @test_throws DomainError XPORTA.iespo(IEQ(inequalities=[-1 0 0 0;0 -1 0 0]), POI(vertices = [1 0 0;0 1 0]), opt_flag="-x")
+    end
+
+    # verifes functionality broken within porta.
+    # TODO: fix PORTA src to let iespo work properly
+    @testset "XPORTA.iespo() fails to do its task" begin
+        @testset "valid in/equalities for a simple 3-simplex" begin
+            simplex_poi = POI(vertices=[1 0 0;0 1 0;0 0 1])
+
+            @testset "tight in/equalities are all valid" begin
+                ieq = IEQ(inequalities = [-1 0 0 0; 0 -1 0 0; 0 0 -1 0], equalities = [1 1 1 1])
+
+                valid_ieq = XPORTA.iespo(ieq, simplex_poi, dir=dir)
+
+                @test ieq.inequalities == valid_ieq.inequalities
+                @test ieq.equalities == valid_ieq.equalities
+            end
+
+            @testset "loose upper bounds inequalities" begin
+                ieq = IEQ(inequalities = [-1 0 0 1; 0 -1 0 1; 0 0 -1 1], equalities = [1 1 1 1])
+
+                valid_ieq = XPORTA.iespo(ieq, simplex_poi, dir=dir)
+
+                @test ieq.inequalities == valid_ieq.inequalities
+                @test ieq.equalities == valid_ieq.equalities
+            end
+
+            @testset "tight inequalities invalid equality" begin
+                ieq = IEQ(inequalities = [-1 0 0 0; 0 -1 0 0; 0 0 -1 0], equalities = [1 1 1 2])
+
+                valid_ieq = XPORTA.iespo(ieq, simplex_poi, dir=dir)
+
+                @test ieq.inequalities == valid_ieq.inequalities
+                @test ieq.equalities == valid_ieq.equalities
+            end
+
+            @testset "invalid inequality among valid inequalities" begin
+                ieq = IEQ(inequalities = [-1 0 0 -2; 0 -1 0 -2; 0 0 -1 -2], equalities = [1 1 1 2])
+
+                valid_ieq = XPORTA.iespo(ieq, simplex_poi, dir=dir)
+
+                @test ieq.inequalities == valid_ieq.inequalities
+                @test ieq.equalities == valid_ieq.equalities
+            end
+        end
     end
 end
 

@@ -33,7 +33,7 @@ using Suppressor
 
 export POI, IEQ # types
 export traf     # xporta methods
-export fctp, iespo, posie     # valid methods
+export fctp, posie     # valid methods
 
 # including local files
 include("./types.jl")
