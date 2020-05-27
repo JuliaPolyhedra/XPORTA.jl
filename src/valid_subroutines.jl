@@ -44,7 +44,7 @@ of the `IEQ`. A `POI` containing the valid points and rays is returned.
 * `cleanup :: Bool = true` - If `true`, created files are removed after computation.
 * `verbose :: Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
 
-For more details regarding `posie` please refer to the [PORTA posie documentation](https://github.com/bdoolittle/julia-porta#posie).
+For more details regarding `posie()` please refer to the [PORTA posie documentation](https://github.com/bdoolittle/julia-porta#posie).
 """
 function posie(ieq::IEQ, poi::POI;
     dir::String="./",
@@ -69,6 +69,43 @@ function posie(ieq::IEQ, poi::POI;
     return valid_poi
 end
 
+"""
+    fctp( inequalities::PortaMatrix, poi::POI; kwargs... ) :: Dict{ String, Dict{Int, POI{Rational{Int}}} }
+
+For the provided `inequalities`, determines which ones tightly bound the polytope
+specified by the input `POI` and which inequalities are violated by the input `POI`.
+Tight bounds are labeled `"valid"` and violations are labeled `"invalid"`. In each case
+the points which saturate or violate the inequalities are returned in a poi. Inequalities
+which are loose bounds are not returned.
+
+Each row of the `inequalities` input corresponds to a distinct inequality in the
+form specified by the `IEQ.inequalites` field.
+
+The output has a nested dictionary structure:
+```
+Dict(
+    "valid" => Dict(
+        id => saturating_poi,  # points/rays which saturate inequalities[id]
+        ...
+    ),
+    "invalid" => Dict(
+        id => violating_poi,   # points/rays which violate inequalities[id]
+        ...
+    )
+)
+```
+
+where `ineq_id` corresponds to the row index of the input `inequalities`. The `"valid"`
+and `"invalid"` dictionaries may include zero or more elements.
+
+`kwargs` is shorthand for the following keyword arguments:
+* `dir::String = "./"` - The directory to which files are written.
+* `filename::String = "traf_tmp"`- The name of produced files.
+* `cleanup::Bool = true` - If `true`, created files are removed after computation.
+* `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
+
+For more details regarding `fctp()` please refer to the [PORTA fctp documentation](https://github.com/bdoolittle/julia-porta#fctp).
+"""
 function fctp( inequalities::PortaMatrix, poi::POI;
     dir::String="./",
     filename::String="fctp_tmp",
@@ -99,13 +136,19 @@ function fctp( inequalities::PortaMatrix, poi::POI;
 
         ineq = inequalities[ineq_id,:]
 
+        # PORTA does not indicate which .poi files are valid or invalid. The
+        # check is implemented manually below. A .poi is either valid or invalid
+        # thus it is sufficient to check a single element.
         if poi_contains_points
+            # A valid point must satisfy the inequality with equality.
             if ineq[1:end-1]' * poi.conv_section[1,:] == ineq[end]
                 push!(tight_poi_tuples, (ineq_id, poi))
             else
                 push!(invalid_poi_tuples, (ineq_id, poi))
             end
         elseif poi_contains_rays
+            # A valid ray must make an obtuse angle with the normal vector of the
+            # bounding halfspace.
             if ineq[1:end-1]' * poi.cone_section[1,:] <= 0
                 push!(tight_poi_tuples, (ineq_id, poi))
             else
@@ -128,11 +171,37 @@ function fctp( inequalities::PortaMatrix, poi::POI;
 end
 
 """
+    iespo( ieq::IEQ, poi::POI; kwargs...) :: IEQ{Rational{Int}}
+
+Enumerates the valid equations and inequalities of the `IEQ` which satisfy the
+points and rays in the `POI`. An `IEQ` containing valid inequalities and equations
+is returned.
+
+!!! danger
+    This method does not work as described by the [PORTA iespo documentation](https://github.com/bdoolittle/julia-porta#iespo). Invalid
+    in/equalities are not filtered out. However, the strong validity check does
+    work.
+
+    To run the strong validity check, use arguments `cleanup=false` and `opt_flag="-v"`.
+    With these arguments, `iespo()` will print a table to the output `.ieq` file which
+    can manually be read/parsed.
+
+    In a future update, a parser may be written for the strong validity table or
+    the PORTA source code may be update to properly execute the in/equality filtering.
+
+`kwargs` is shorthand for the following keyword arguments:
+* `dir::String = "./"` - The directory to which files are written.
+* `filename::String = "traf_tmp"`- The name of produced files.
+* `strong_validity::Bool =  false` - Prints the strong validity table to the output `IEQ`, (requires manual parsing).
+* `cleanup::Bool = true` - If `true`, created files are removed after computation.
+* `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
+
+For more details regarding `iespo()` please refer to the [PORTA iespo documentation](https://github.com/bdoolittle/julia-porta#iespo).
 """
 function iespo(ieq::IEQ, poi::POI;
     dir::String="./",
     filename::String="iespo_tmp",
-    opt_flag::String="",
+    strong_validity::Bool=false,
     cleanup::Bool=true,
     verbose::Bool=false
 ) :: IEQ{Rational{Int}}
@@ -140,11 +209,8 @@ function iespo(ieq::IEQ, poi::POI;
     workdir = cleanup ? make_porta_tmp(dir) : dir
 
     valid_args = Array{String,1}(undef,0)
-    if opt_flag != ""
-        if opt_flag != "-v"
-            throw(DomainError(opt_flag, "invalid `opt_flag` argument. The valid option is \"-v\"."))
-        end
-        push!(valid_args, opt_flag)
+    if strong_validity
+        push!(valid_args, "-v")
     end
 
     ieq_filepath = write_ieq(filename, ieq, dir=workdir)

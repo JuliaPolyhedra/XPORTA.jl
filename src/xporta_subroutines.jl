@@ -41,13 +41,16 @@ or computes the `POI` struct from the `IEQ` struct.
 
     traf(ieq::IEQ; kwargs... ) :: POI
 
-where `kwargs` is shorthand for the following keyword arguments:
+When converting an `IEQ` -> `POI` the `valid` field of the `IEQ` must be populated
+if the origin is not a feasible point of the linear system.
 
-* `dir :: String = "./"` - The directory in which to write files.
-* `filename :: String = "traf_tmp"`- The name of produced files.
-* `cleanup :: Bool = true` - If `true`, created files are removed after computation.
-* `opt_flag :: String = ""` - Optional flags to pass the `traf` method of the xporta binary.
-* `verbose :: Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
+`kwargs` is shorthand for the following keyword arguments:
+
+* `dir::String = "./"` - The directory in which to write files.
+* `filename::String = "traf_tmp"`- The name of produced files.
+* `cleanup::Bool = true` - If `true`, created files are removed after computation.
+* `opt_flag::String = ""` - Optional flags to pass the `traf` method of the xporta binary.
+* `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
 
 The following excerpt from the PORTA documentation lists valid optional flags and their behavior:
 

@@ -4,13 +4,13 @@
 
 | Documentation | Test Coverage | Linux/Mac | Windows | FreeBSD |
 |:-------------:|:-------------:|:---------:|:-------:|:-------:|
-|[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaPolyhedra.github.io/XPORTA.jl/dev) | [![Coverage Status](https://coveralls.io/repos/github/JuliaPolyhedra/XPORTA.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaPolyhedra/XPORTA.jl?branch=master)[![codecov](https://codecov.io/gh/JuliaPolyhedra/XPORTA.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaPolyhedra/XPORTA.jl) | [![Linux/Mac Build Status](https://travis-ci.org/JuliaPolyhedra/XPORTA.jl.svg?branch=master)](https://travis-ci.org/github/JuliaPolyhedra/XPORTA.jl) | [![Windows Build status](https://ci.appveyor.com/api/projects/status/2kjsbavtulwhsamu?svg=true)](https://ci.appveyor.com/project/bdoolittle/xporta-jl) | [![FreeBSD Build Status](https://api.cirrus-ci.com/github/JuliaPolyhedra/XPORTA.jl.svg)](https://cirrus-ci.com/github/JuliaPolyhedra/XPORTA.jl) |
+|[![Stable](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaPolyhedra.github.io/XPORTA.jl/stable) [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaPolyhedra.github.io/XPORTA.jl/dev) | [![Coverage Status](https://coveralls.io/repos/github/JuliaPolyhedra/XPORTA.jl/badge.svg?branch=master)](https://coveralls.io/github/JuliaPolyhedra/XPORTA.jl?branch=master)[![codecov](https://codecov.io/gh/JuliaPolyhedra/XPORTA.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/JuliaPolyhedra/XPORTA.jl) | [![Linux/Mac Build Status](https://travis-ci.org/JuliaPolyhedra/XPORTA.jl.svg?branch=master)](https://travis-ci.org/github/JuliaPolyhedra/XPORTA.jl) | [![Windows Build status](https://ci.appveyor.com/api/projects/status/2kjsbavtulwhsamu?svg=true)](https://ci.appveyor.com/project/bdoolittle/xporta-jl) | [![FreeBSD Build Status](https://api.cirrus-ci.com/github/JuliaPolyhedra/XPORTA.jl.svg)](https://cirrus-ci.com/github/JuliaPolyhedra/XPORTA.jl) |
 
 ## Documentation
 
-* XPORTA.jl documentation is published at [JuliaPolyhedra.github.io/XPORTA.jl/dev/](https://JuliaPolyhedra.github.io/XPORTA.jl/dev/).
-* PORTA documentation is easily accessible at [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta).
-* PORTA source code may be downloaded from [http://porta.zib.de](http://porta.zib.de/).
+* XPORTA.jl documentation: [JuliaPolyhedra.github.io/XPORTA.jl/dev/](https://JuliaPolyhedra.github.io/XPORTA.jl/stable/).
+* PORTA documentation: [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta).
+* Official PORTA software: [http://porta.zib.de](http://porta.zib.de/).
 
 ## Licensing
 

@@ -27,7 +27,8 @@ converted to type `Rational{Int}`.
 Fields:
 * `conv_section` - each matrix row is a vertex.
 * `cone_section` - each matrix row is a ray.
-* `valid` -  a feasible point for the vertex representation.
+* `valid` -  a feasible point for the vertex representation. In the context of a `POI`,
+        this field has no known use.
 * `dim` - the dimension of vertices and rays. This field is auto-populated on construction.
 
 A `DomainError` is thrown if the column dimension of rays and vertices is not equal.

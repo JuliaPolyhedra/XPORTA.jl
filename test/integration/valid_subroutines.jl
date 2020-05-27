@@ -106,6 +106,15 @@ end
             @test poi_dict["valid"][2].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
             @test poi_dict["invalid"][3].conv_section == [1 1 1;1 -1 1;-1 1 1;-1 -1 1]
         end
+
+        @testset "halfspace containing single vertex is valid for that vertex" begin
+            poi_dict = fctp([1 1 1 3], cube_poi, dir=dir)
+
+            @test length(poi_dict["valid"]) == 1
+            @test length(poi_dict["invalid"]) == 0
+
+            @test poi_dict["valid"][1].conv_section == [1 1 1]
+        end
     end
 
     @testset "square cone" begin
@@ -177,10 +186,6 @@ end
 
 @testset "XPORTA.iespo()" begin
 
-    @testset "invalid opt_flag" begin
-        @test_throws DomainError XPORTA.iespo(IEQ(inequalities=[-1 0 0 0;0 -1 0 0]), POI(vertices = [1 0 0;0 1 0]), opt_flag="-x")
-    end
-
     # verifes functionality broken within porta.
     # TODO: fix PORTA src to let iespo work properly
     @testset "XPORTA.iespo() fails to do its task" begin
@@ -214,7 +219,7 @@ end
                 @test ieq.equalities == valid_ieq.equalities
             end
 
-            @testset "invalid inequality among valid inequalities" begin
+            @testset "invalid inequalities and equation" begin
                 ieq = IEQ(inequalities = [-1 0 0 -2; 0 -1 0 -2; 0 0 -1 -2], equalities = [1 1 1 2])
 
                 valid_ieq = XPORTA.iespo(ieq, simplex_poi, dir=dir)
