@@ -208,21 +208,77 @@ function portsort(poi::POI;
     return poi
 end
 
+"""
+    dim( poi::POI; kwargs... ) :: Dict{String, Union{ Int, IEQ{Rational{Int}} } }
+
+Given a `POI` computes the minimal dimension and constraining equalities for the
+convex hull of the `POI`. The returned dictionary has the form
+
+```
+Dict(
+    "dim" => <integer number of dimensions>,
+    "ieq" => <IEQ struct w/ constraining equalities>
+)
+```
+
+`kwargs` specifies keyword args:
+* `dir::String = "./"` - The directory in which to write files.
+* `filename::String = "dim_tmp"`- The name of produced files.
+* `cleanup::Bool = true` - If `true`, created files are removed after computation.
+* `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
+
+For more details regarding `dim` please refer to the [PORTA dim documentation](https://github.com/bdoolittle/julia-porta#dim).
+"""
 function dim(poi::POI;
     dir::String="./",
     filename::String="dim_tmp",
     cleanup::Bool=true,
     verbose::Bool=false
-)
+) :: Dict{String, Union{Int, IEQ{Rational{Int}}}}
 
     workdir = cleanup ? make_porta_tmp(dir) : dir
 
     poi_filepath = write_poi(filename, poi, dir=workdir)
 
-    run_xporta("-D", ["-p", poi_filepath], verbose=verbose)
+    stdout = run_xporta("-D", [poi_filepath], verbose=verbose)
+
+    dim_match = match(r"DIMENSION OF THE POLYHEDRON : (\d+)", stdout)
+
+    eq_matches = collect(eachmatch(r"\(\s*\d+\)(.*)==\s*(.*)\n", stdout))
+
+    num_eq = length(eq_matches)
+
+    equations = zeros(Rational{Int}, (num_eq, poi.dim + 1))
+    for i in 1:num_eq
+        eq_match = eq_matches[i]
+
+        # parse left hand side matches
+        for lhs_match in eachmatch(r"\s*([+-])\s*(?:(\d+)(?:/(\d+))?)?x(\d+)", eq_match.captures[1])
+
+            sign = lhs_match.captures[1]
+            num = (lhs_match.captures[2] === nothing) ? parse(Int, sign*"1") : parse(Int, sign*lhs_match.captures[2])
+            den = (lhs_match.captures[3] === nothing) ? 1 : parse(Int, lhs_match.captures[3])
+            col_id = parse(Int, lhs_match.captures[4])
+
+            equations[i,col_id] += Rational(num, den)
+        end
+
+        # parse right hand side match
+        rhs_match = match(r"([+-])?\s*(\d+)(?:/(\d+))?", eq_match.captures[2])
+
+        sign = (rhs_match.captures[1] === nothing) ? "+" : rhs_match.captures[1]
+        num = parse(Int, sign*rhs_match.captures[2])
+        den = (rhs_match.captures[3] === nothing) ? 1 : parse(Int, rhs_match.captures[3])
+
+        equations[i,end] += Rational(num, den)
+    end
 
     if cleanup
         rm_porta_tmp(dir)
     end
 
+    Dict(
+        "dim" => parse(Int, dim_match.captures[1]),
+        "ieq" => IEQ(equalities = equations)
+    )
 end

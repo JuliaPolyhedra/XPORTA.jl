@@ -242,7 +242,49 @@ end
 
 @testset "dim()" begin
 
-    # XPORTA.dim(POI(vertices = [1 0 0;0 1 0;0 0 1]), dir=dir, cleanup=false)
+    @testset "cube" begin
+        cube_poi = POI(vertices=[
+            1 1 1; 1 1 -1; 1 -1 1; 1 -1 -1;
+            -1 1 1; -1 1 -1; -1 -1 1; -1 -1 -1;
+        ])
+
+        dim_dict = dim(cube_poi, dir=dir)
+
+        @test dim_dict["dim"] == 3
+        @test dim_dict["ieq"].dim == 3
+        @test dim_dict["ieq"].equalities == Matrix{Rational{Int}}(undef, (0,4))
+    end
+
+    @testset "3-simplex in 3 dimensions" begin
+        dim_dict = dim(POI(vertices=[1 0 0;0 1 0;0 0 1]), dir=dir)
+        @test dim_dict["dim"] == 2
+        @test dim_dict["ieq"].dim == 3
+        @test dim_dict["ieq"].equalities == [1 1 1 1]
+    end
+
+    @testset "3-simplex in 9 dimensions" begin
+        dim_dict = dim(POI(vertices = [
+            1 1 1 0 0 0 0 0 0;
+            0 0 0 1 1 1 0 0 0;
+            0 0 0 0 0 0 1 1 1;
+        ]), dir=dir)
+
+        @test length(dim_dict) == 2
+        @test dim_dict["dim"] == 2
+        @test dim_dict["ieq"].dim == 9
+        @test dim_dict["ieq"].equalities == [
+            0 0 0 0 0 0 0 1 -1 0;
+            0 0 0 0 0 0 1 -1 0 0;
+            0 0 0 0 1 -1 0 0 0 0;
+            0 0 0 1 -1 0 0 0 0 0;
+            0 1 -1 0 0 0 0 0 0 0;
+            1 -1 0 0 0 0 0 0 0 0;
+            0 0 1 0 0 1 0 0 1 1;
+        ]
+    end
+
+
+
 
 
 end

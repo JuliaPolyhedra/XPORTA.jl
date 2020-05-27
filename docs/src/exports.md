@@ -26,6 +26,7 @@ IEQ
 ```@docs
 traf
 portsort
+dim
 posie
 fctp
 vint
