@@ -1,4 +1,4 @@
-using Test, XPORTA
+using Test, Suppressor, XPORTA
 
 @testset "src/valid_subroutines.jl" begin
 
@@ -7,6 +7,30 @@ dir = "./test/files/"
 @testset "run_valid()" begin
     @testset "throws DomainError if method_flag is not recognized" begin
         @test_throws DomainError XPORTA.run_valid("-X", [dir*"example1.poi"])
+    end
+
+    @testset "verbose prints to STDOUT" begin
+        # setup files for first run
+        XPORTA.rm_porta_tmp(dir)
+        XPORTA.make_porta_tmp(dir)
+        ex1_poi_filepath = cp(dir*"example1.poi", dir*"porta_tmp/example1.poi")
+        ex1_ieq_filepath = cp(dir*"example1.ieq", dir*"porta_tmp/example1.ieq")
+
+        # stdout is returned when verbose=false (also returned when true)
+        return_string = XPORTA.run_valid("-P", [ex1_ieq_filepath, ex1_poi_filepath], verbose=false)
+
+        # setup files for second run
+        XPORTA.rm_porta_tmp(dir)
+        XPORTA.make_porta_tmp(dir)
+        ex1_poi_filepath = cp(dir*"example1.poi", dir*"porta_tmp/example1.poi")
+        ex1_ieq_filepath = cp(dir*"example1.ieq", dir*"porta_tmp/example1.ieq")
+
+        # capturing stdout when verbose=true
+        capture_string = @capture_out XPORTA.run_valid("-P", [ex1_ieq_filepath, ex1_poi_filepath], verbose=true)
+
+        @test return_string == capture_string
+
+        XPORTA.rm_porta_tmp(dir)
     end
 end
 
@@ -280,7 +304,6 @@ end
             @test simplex_poi.conv_section == [0 0 1;0 1 0;1 0 0]
         end
     end
-
 
     @testset "open linear system" begin
         @testset "positive octant in 3-space" begin

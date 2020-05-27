@@ -1,35 +1,39 @@
 """
-    run_xporta( method_flag::String, args::Array{String,1}; verbose::Bool = false)
+    run_xporta( method_flag::String, args::Array{String,1}; verbose::Bool = false) :: String
 
 !!! warning
     This method is intended for advanced use of the xporta binary. User knowledge
     of flags and arguments is required for successful execution. Furthermore, users
-    must explicitly handle file IO for the xporta binary.
+    must explicitly handle file IO for the `xporta` binary.
 
-Runs the xporta binary through `PORTA_jll`. The `method_flag` argument tells the xporta
-binary which method to call. Valid options include:
-* `"-D"` runs the `dim` method
-* `"-F"` runs the `fmel` method
-* `"-S"` runs the `portsort` method
-* `"-T"` runs the `traf` method
+Runs the `xporta` binary through `PORTA_jll` and returns a string containing `STDOUT`.
+The `method_flag` argument specifies which `xporta` subroutine to call.
+
+Valid options for `method_flag` are:
+* `"-D"` runs the `dim` subroutine
+* `"-F"` runs the `fmel` subroutine
+* `"-S"` runs the `portsort` subroutine
+* `"-T"` runs the `traf` subroutine
 
 The `args` parameter is uniquely specified by `method_flag`, for more information
-regarding methods and arguments see the [xporta documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#xporta).
+regarding methods and arguments see the [`xporta` documentation](https://github.com/bdoolittle/julia-porta#xporta).
 
-The `verbose` argument determines whether the xporta prints to `STDOUT`.
+If `verbose=true` the `xporta` prints to `STDOUT`.
 """
-function run_xporta(method_flag::String, args::Array{String,1}; verbose::Bool=false)
+function run_xporta(method_flag::String, args::Array{String,1}; verbose::Bool=false) :: String
     if !(method_flag in ["-D", "-F", "-S", "-T"])
         throw(DomainError(method_flag, "method_flag is invalid. Valid options are \"-D\", \"-F\", \"-S\", \"-T\"."))
     end
 
-    xporta() do xporta_path
-        if !verbose
-            @suppress run(`$xporta_path $method_flag $args`)
-        else
-            run(`$xporta_path $method_flag $args`)
-        end
+    stdout = xporta() do xporta_path
+        @capture_out run(`$xporta_path $method_flag $args`)
     end
+
+    if verbose
+        print(stdout)
+    end
+
+    stdout
 end
 
 """
@@ -202,4 +206,23 @@ function portsort(poi::POI;
     end
 
     return poi
+end
+
+function dim(poi::POI;
+    dir::String="./",
+    filename::String="dim_tmp",
+    cleanup::Bool=true,
+    verbose::Bool=false
+)
+
+    workdir = cleanup ? make_porta_tmp(dir) : dir
+
+    poi_filepath = write_poi(filename, poi, dir=workdir)
+
+    run_xporta("-D", ["-p", poi_filepath], verbose=verbose)
+
+    if cleanup
+        rm_porta_tmp(dir)
+    end
+
 end

@@ -1,4 +1,4 @@
-using Test, XPORTA
+using Test, Suppressor, XPORTA
 
 @testset "src/xporta_subroutines.jl" begin
 
@@ -6,7 +6,29 @@ dir = "./test/files/"
 
 @testset "run_xporta()" begin
     @testset "throws DomainError if method_flag is not recognized" begin
-        @test_throws DomainError XPORTA.run_xporta("-X", ["dir/example1.poi"])
+        @test_throws DomainError XPORTA.run_xporta("-X", [dir *"example1.poi"])
+    end
+
+    @testset "verbose prints to STDOUT" begin
+        # setup files for first run
+        XPORTA.rm_porta_tmp(dir)
+        XPORTA.make_porta_tmp(dir)
+        ex1_poi_filepath = cp(dir*"example1.poi", dir*"porta_tmp/example1.poi")
+
+        # stdout is returned when verbose=false (also returned when true)
+        return_string = XPORTA.run_xporta("-T", [ex1_poi_filepath], verbose=false)
+
+        # setup files for second run
+        XPORTA.rm_porta_tmp(dir)
+        XPORTA.make_porta_tmp(dir)
+        ex1_poi_filepath = cp(dir*"example1.poi", dir*"porta_tmp/example1.poi")
+
+        # capturing stdout when verbose=true
+        capture_string = @capture_out XPORTA.run_xporta("-T", [ex1_poi_filepath], verbose=true)
+
+        @test return_string == capture_string
+
+        XPORTA.rm_porta_tmp(dir)
     end
 
     @testset "test traf (xporta -T) with example1.poi" begin
@@ -216,6 +238,13 @@ end
             @test sort_poi.conv_section == [0 -1 0 2;0 -1 0 1;-2 0 0 2;0 -3 0 0]
         end
     end
+end
+
+@testset "dim()" begin
+
+    # XPORTA.dim(POI(vertices = [1 0 0;0 1 0;0 0 1]), dir=dir, cleanup=false)
+
+
 end
 
 end
