@@ -16,6 +16,7 @@ historical names from the PORTA software.
 - [`fctp`](@ref) - Given inequalities and a `POI`, determines which inequalities
         tightly bound the `POI` and which inequalities exclude elements of the `POI`.
         In each case, the satisfying/violating elements are returned in a `POI`.
+- [`vint`](@ref) - Enumerates the integral points which satisfy the linear system specified by an `IEQ`.
 
 The compiled PORTA binaries are accessed through [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl)
 
@@ -39,8 +40,8 @@ using PORTA_jll
 using Suppressor
 
 export POI, IEQ # types
-export traf, portsort  # xporta methods
-export fctp, posie     # valid methods
+export traf, portsort    # xporta methods
+export fctp, posie, vint # valid methods
 
 # including local files
 include("./types.jl")

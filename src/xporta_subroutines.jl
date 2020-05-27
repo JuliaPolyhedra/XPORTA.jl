@@ -154,7 +154,7 @@ Sorting is performed in the following hierarchy:
 
 `kwargs` is shorthand for the keyword arguments:
 * `dir::String = "./"` - The directory in which to write files.
-* `filename::String = "traf_tmp"`- The name of produced files.
+* `filename::String = "portsort_tmp"`- The name of produced files.
 * `cleanup::Bool = true` - If `true`, created files are removed after computation.
 * `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
 

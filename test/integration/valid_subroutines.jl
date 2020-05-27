@@ -231,4 +231,71 @@ end
     end
 end
 
+@testset "vint()" begin
+    @testset "invalid upper/lower bounds" begin
+        @test_throws DomainError vint(IEQ(inequalities=[-1 0 0 0;0 -1 0 0;0 0 -1 0], upper_bounds = [1 1 1;2 2 2], lower_bounds = [0 0 0]), dir=dir)
+        @test_throws DomainError vint(IEQ(inequalities=[-1 0 0 0;0 -1 0 0;0 0 -1 0], upper_bounds = [1 1 1], lower_bounds = [0 0 0;-1 -1 -1]), dir=dir)
+        @test_throws DomainError vint(IEQ(inequalities=[-1 0 0 0;0 -1 0 0;0 0 -1 0], upper_bounds = [1 1 1]), dir=dir)
+        @test_throws DomainError vint(IEQ(inequalities=[-1 0 0 0;0 -1 0 0;0 0 -1 0], lower_bounds = [0 0 0]), dir=dir)
+    end
+
+    @testset "finds vertices of simple polyhedra given complete H-representation" begin
+        @testset "unit cube with corner at origin has vertices as integer points" begin
+            int_cube_ieq = IEQ(inequalities=[0 0 1 1;0 1 0 1;1 0 0 1;-1 0 0 0;0 -1 0 0;0 0 -1 0], upper_bounds=[1 1 1], lower_bounds=[0 0 0])
+            int_cube_poi = vint(int_cube_ieq, dir=dir)
+
+            @test int_cube_poi.conv_section == [
+                0 0 0;0 0 1;0 1 0;0 1 1;
+                1 0 0;1 0 1;1 1 0;1 1 1;
+            ]
+            @test length(int_cube_poi.cone_section) == 0
+        end
+
+        @testset "vint example from http://co-at-work.zib.de/berlin2009/downloads/2009-09-22/2009-09-22-0900-CR-AW-Introduction-Porta-Polymake.pdf" begin
+            example_ieq = IEQ(inequalities=[
+                -1 0 0 0 0;0 -1 0 0 0;0 0 -1 0 0;0 0 0 -1 0;1 1 0 0 1;0 1 1 0 1;0 0 1 1 1;1 0 0 1 1;0 1 0 1 1
+            ], upper_bounds=[1 1 1 1], lower_bounds=[0 0 0 0])
+
+            example_poi = vint(example_ieq, dir=dir)
+            @test example_poi.conv_section == [0 0 0 0;0 0 0 1;0 0 1 0;0 1 0 0;1 0 0 0;1 0 1 0]
+        end
+
+        @testset "unit cube centered at origin only has the origin as an integral point" begin
+            cube_ieq = IEQ(inequalities=[
+                0 0 2 1;0 2 0 1;2 0 0 1;-2 0 0 1;0 -2 0 1;0 0 -2 1
+            ], upper_bounds=[1 1 1], lower_bounds=[-1 -1 -1])
+
+            cube_int_poi = vint(cube_ieq, dir=dir)
+
+            @test cube_int_poi.conv_section == [0 0 0]
+        end
+
+        @testset "simplex with integral vertices" begin
+            simplex_ieq = IEQ(
+                inequalities=[-1 0 0 0;0 -1 0 0;0 0 -1 0], equalities=[1 1 1 1],
+                upper_bounds=[1 1 1], lower_bounds=[0 0 0]
+            )
+            simplex_poi = vint(simplex_ieq, dir=dir)
+
+            @test simplex_poi.conv_section == [0 0 1;0 1 0;1 0 0]
+        end
+    end
+
+
+    @testset "open linear system" begin
+        @testset "positive octant in 3-space" begin
+            # bounds completely specify a valid range w/o inequalities
+            ieq = IEQ(
+                upper_bounds=[1 1 1],
+                lower_bounds=[0 0 0]
+            )
+            poi = vint(ieq, dir=dir)
+            @test poi.conv_section == [
+                0 0 0;0 0 1;0 1 0;0 1 1;
+                1 0 0;1 0 1;1 1 0;1 1 1;
+            ]
+        end
+    end
+end
+
 end

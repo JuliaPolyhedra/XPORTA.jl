@@ -40,7 +40,7 @@ of the `IEQ`. A `POI` containing the valid points and rays is returned.
 
 `kwargs` is shorthand for the following keyword arguments:
 * `dir :: String = "./"` - The directory to which files are written.
-* `filename :: String = "traf_tmp"`- The name of produced files.
+* `filename :: String = "posie_tmp"`- The name of produced files.
 * `cleanup :: Bool = true` - If `true`, created files are removed after computation.
 * `verbose :: Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
 
@@ -62,7 +62,7 @@ function posie(ieq::IEQ, poi::POI;
 
     valid_poi = isfile(ieq_filepath * ".poi") ? read_poi(ieq_filepath * ".poi") : POI(vertices = Array{Rational{Int}}(undef,0,0))
 
-    if (cleanup)
+    if cleanup
         rm_porta_tmp(dir)
     end
 
@@ -100,7 +100,7 @@ and `"invalid"` dictionaries may include zero or more elements.
 
 `kwargs` is shorthand for the following keyword arguments:
 * `dir::String = "./"` - The directory to which files are written.
-* `filename::String = "traf_tmp"`- The name of produced files.
+* `filename::String = "fctp_tmp"`- The name of produced files.
 * `cleanup::Bool = true` - If `true`, created files are removed after computation.
 * `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
 
@@ -157,7 +157,7 @@ function fctp( inequalities::PortaMatrix, poi::POI;
         end
    end
 
-    if (cleanup)
+    if cleanup
         rm_porta_tmp(dir)
     end
 
@@ -191,7 +191,7 @@ is returned.
 
 `kwargs` is shorthand for the following keyword arguments:
 * `dir::String = "./"` - The directory to which files are written.
-* `filename::String = "traf_tmp"`- The name of produced files.
+* `filename::String = "iespo_tmp"`- The name of produced files.
 * `strong_validity::Bool =  false` - Prints the strong validity table to the output `IEQ`, (requires manual parsing).
 * `cleanup::Bool = true` - If `true`, created files are removed after computation.
 * `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
@@ -221,9 +221,56 @@ function iespo(ieq::IEQ, poi::POI;
 
     valid_ieq = read_ieq(poi_filepath * ".ieq")
 
-    if (cleanup)
+    if cleanup
         rm_porta_tmp(dir)
     end
 
     return valid_ieq
+end
+
+"""
+    vint( ieq::IEQ; kwargs... ) :: POI{Rational{Int}}
+
+Enumerates all integral (integer) points which satisfy the linear system specified by the `IEQ`
+and bounds specified by `upper_bounds` and `lower_bounds` fields of the `IEQ`.
+These points may lie on the facets, vertices, or interior of the polytope specified by
+`IEQ`. If no equalities or inequalities are specified, all integral points within
+the bounds will be enumerated.
+
+`kwargs` specifes the keyword args:
+* `dir::String = "./"` - The directory to which files are written.
+* `filename::String = "vint_tmp"`- The name of produced files.
+* `cleanup::Bool = true` - If `true`, created files are removed after computation.
+* `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
+
+A `DomainError` is thrown if the `IEQ` does not contain upper/lower bounds or
+if upper/lower bounds contain more than one row.
+
+For more details regarding `vint()` please refer to the [PORTA vint documentation](https://github.com/bdoolittle/julia-porta#vint).
+"""
+function vint(ieq::IEQ;
+    dir::String="./",
+    filename::String="vint_tmp",
+    cleanup::Bool=true,
+    verbose::Bool=false
+) :: POI{Rational{Int}}
+
+    workdir = cleanup ? make_porta_tmp(dir) : dir
+
+    if (length(ieq.upper_bounds) != ieq.dim) || (length(ieq.lower_bounds) != ieq.dim)
+        throw(DomainError((ieq.upper_bounds, ieq.lower_bounds), "upper/lower bounds are required for vint and there should one row for each."))
+    end
+
+    ieq_filepath = write_ieq(filename, ieq, dir=workdir)
+
+    run_valid("-V", [ieq_filepath])
+
+    # replace .ieq file extension with .poi extension
+    poi = read_poi(replace(ieq_filepath, r"\.ieq$"=>".poi"))
+
+    if cleanup
+        rm_porta_tmp(dir)
+    end
+
+    return poi
 end
