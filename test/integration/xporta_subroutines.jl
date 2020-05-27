@@ -158,4 +158,64 @@ end
     end
 end
 
+@testset "portsort()" begin
+    @testset "ieq inputs" begin
+        @testset "sorts inequalities by scale factor (high to low)" begin
+            sort_ieq = portsort(IEQ(inequalities=[-1 0 0 0;-2 0 0 0;1 0 0 0], equalities=[1 0 -1 0;2 0 -1 0]), dir=dir)
+            @test sort_ieq.inequalities == [1 0 0 0;-1 0 0 0;-2 0 0 0]
+            @test sort_ieq.equalities == [2 0 -1 0;1 0 -1 0]
+
+            sort_ieq = portsort(IEQ(inequalities=[3 0 0 0;0 2 0 0;0 0 1 0]), dir=dir)
+            @test sort_ieq.inequalities == [3 0 0 0;0 2 0 0;0 0 1 0]
+        end
+
+        @testset "sorts inequalities by lexicographical order" begin
+            sort_ieq = portsort(IEQ(inequalities=[0 -1 0 0;-1 0 0 0;0 0 -1 0], equalities = [2 0 -1 0;2 -1 0 0]), dir=dir)
+            @test sort_ieq.inequalities == [-1 0 0 0;0 -1 0 0;0 0 -1 0]
+            @test sort_ieq.equalities == [2 -1 0 0;2 0 -1 0]
+        end
+
+        @testset "sorts inequalites by rhs bound (low to high)" begin
+            sort_ieq = portsort(IEQ(inequalities=[-1 0 0 3;-1 0 0 2;-1 0 0 1], equalities = [1 1 1 1;1 1 1 -1]), dir=dir)
+            @test sort_ieq.inequalities == [-1 0 0 1;-1 0 0 2;-1 0 0 3]
+            @test sort_ieq.equalities == [1 1 1 -1;1 1 1 1]
+        end
+
+        @testset "sorts inequalities by scale factor over lexicographical order" begin
+            sort_ieq = portsort(IEQ(inequalities=[-3 0 0 0;0 -2 0 0;0 0 -1 0]), dir=dir)
+            @test sort_ieq.inequalities == [0 0 -1 0;0 -2 0 0;-3 0 0 0]
+        end
+
+        @testset "sorts inequalities by rhs bound, scale factor, then lexicographical order" begin
+            sort_ieq = portsort(IEQ(inequalities=[0 -3 0 0;0 -1 0 2;0 -1 0 1;-2 0 0 2]), dir=dir)
+            @test sort_ieq.inequalities == [0 -3 0 0;0 -1 0 1;0 -1 0 2;-2 0 0 2]
+        end
+    end
+
+    @testset "poi inputs" begin
+        @testset "sorts points by scale factor (high to low)" begin
+            sort_poi = portsort(POI(vertices=[-1 0 0 0;-2 0 0 0;1 0 0 0], rays=[0 1 0 0;0 2 0 0;0 3 0 0]), dir=dir)
+            @test sort_poi.conv_section == [1 0 0 0;-1 0 0 0;-2 0 0 0]
+            @test sort_poi.cone_section == [0 3 0 0;0 2 0 0;0 1 0 0]
+
+            sort_poi = portsort(POI(vertices=[3 0 0 0;0 2 0 0;0 0 1 0]), dir=dir)
+            @test sort_poi.conv_section == [3 0 0 0;0 2 0 0;0 0 1 0]
+        end
+
+        @testset "sorts points by lexicographical order" begin
+            sort_poi = portsort(POI(vertices=[0 -1 0 0;-1 0 0 0;0 0 -1 0]), dir=dir)
+            @test sort_poi.conv_section == [-1 0 0 0;0 -1 0 0;0 0 -1 0]
+        end
+
+        @testset "sorts points by scale factor over lexicographical order" begin
+            sort_poi = portsort(POI(vertices=[-3 0 0 0;0 -2 0 0;0 0 -1 0], rays=[0 0 0 3;1 0 0 0;0 -1 0 0]), dir=dir)
+            @test sort_poi.conv_section == [0 0 -1 0;0 -2 0 0;-3 0 0 0]
+            @test sort_poi.cone_section ==  [0 0 0 3;1 0 0 0;0 -1 0 0]
+
+            sort_poi = portsort(POI(vertices=[0 -3 0 0;0 -1 0 2;0 -1 0 1;-2 0 0 2]), dir=dir)
+            @test sort_poi.conv_section == [0 -1 0 2;0 -1 0 1;-2 0 0 2;0 -3 0 0]
+        end
+    end
+end
+
 end

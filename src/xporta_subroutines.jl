@@ -35,11 +35,11 @@ end
 """
 The `traf` method computes an `IEQ` struct given a `POI` struct,
 
-    traf( poi::POI; kwargs... ) :: IEQ
+    traf( poi::POI; kwargs... ) :: IEQ{Rational{Int}}
 
 or computes the `POI` struct from the `IEQ` struct.
 
-    traf(ieq::IEQ; kwargs... ) :: POI
+    traf(ieq::IEQ; kwargs... ) :: POI{Rational{Int}}
 
 When converting an `IEQ` -> `POI` the `valid` field of the `IEQ` must be populated
 if the origin is not a feasible point of the linear system.
@@ -75,7 +75,7 @@ The following excerpt from the PORTA documentation lists valid optional flags an
                are written in hexadecimal format (hex). Such hexadecimal format
                can not be reread as input.
 
-For more details regarding `traf` please refer to the [PORTA traf documentation](https://github.com/bdoolittle/julia-porta/blob/master/README.md#traf).
+For more details regarding `traf` please refer to the [PORTA traf documentation](https://github.com/bdoolittle/julia-porta#traf).
 """
 function traf(poi::POI;
     dir::String="./",
@@ -87,7 +87,7 @@ function traf(poi::POI;
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid opt_flags argument. Valid options any ordering of '-poscvl' and substrings."))
+            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options any ordering of '-poscvl' and substrings."))
         end
         push!(xporta_args, opt_flag)
     end
@@ -108,11 +108,17 @@ function traf(poi::POI;
     return ieq
 end
 
-function traf(ieq::IEQ; dir::String="./", filename::String="traf_tmp", opt_flag::String="", cleanup::Bool=true, verbose::Bool=false) :: POI
+function traf(ieq::IEQ;
+    dir::String="./",
+    filename::String="traf_tmp",
+    opt_flag::String="",
+    cleanup::Bool=true,
+    verbose::Bool=false
+) :: POI{Rational{Int}}
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid opt_flags argument. Valid options any ordering of '-poscvl' and permuted substrings."))
+            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options any ordering of '-poscvl' and permuted substrings."))
         end
     end
 
@@ -125,7 +131,73 @@ function traf(ieq::IEQ; dir::String="./", filename::String="traf_tmp", opt_flag:
 
     poi = read_poi(file_path * ".poi")
 
-    if (cleanup)
+    if cleanup
+        rm_porta_tmp(dir)
+    end
+
+    return poi
+end
+
+"""
+    portsort( ieq::IEQ; kwargs... ) :: IEQ{Rational{Int}}
+
+Sorts the inequalities and equalities of the provided `IEQ`.
+
+    portsort( poi::POI; kwargs... ) :: POI{Rational{Int}}
+
+Sorts the vertices and rays of the provided `POI`.
+
+Sorting is performed in the following hierarchy:
+1. Right-hand-side of in/equalities from high to low.
+2. Scale factors from low to high.
+3. Lexicographical order.
+
+`kwargs` is shorthand for the keyword arguments:
+* `dir::String = "./"` - The directory in which to write files.
+* `filename::String = "traf_tmp"`- The name of produced files.
+* `cleanup::Bool = true` - If `true`, created files are removed after computation.
+* `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
+
+For more details regarding `portsort` please refer to the [PORTA portsort documentation](https://github.com/bdoolittle/julia-porta#portsort).
+"""
+function portsort(ieq::IEQ;
+    dir::String="./",
+    filename::String="portsort_tmp",
+    cleanup::Bool=true,
+    verbose::Bool=false
+) :: IEQ{Rational{Int}}
+
+    workdir = cleanup ? make_porta_tmp(dir) : dir
+
+    ieq_filepath = write_ieq(filename, ieq, dir=workdir)
+
+    run_xporta("-S", [ieq_filepath], verbose=verbose)
+
+    ieq = read_ieq(ieq_filepath * ".ieq")
+
+    if cleanup
+        rm_porta_tmp(dir)
+    end
+
+    return ieq
+end
+
+function portsort(poi::POI;
+    dir::String="./",
+    filename::String="portsort_tmp",
+    cleanup::Bool=true,
+    verbose::Bool=false
+) :: POI{Rational{Int}}
+
+    workdir = cleanup ? make_porta_tmp(dir) : dir
+
+    poi_filepath = write_poi(filename, poi, dir=workdir)
+
+    run_xporta("-S", [poi_filepath], verbose=verbose)
+
+    poi = read_poi(poi_filepath * ".poi")
+
+    if cleanup
         rm_porta_tmp(dir)
     end
 

@@ -5,12 +5,16 @@ historical names from the PORTA software.
 
 # Exports
 
-- [`POI`](@ref) - *Type*, The vertex representation of a polyhedra.
-- [`IEQ`](@ref) - *Type*, The intersecting halfspace representation of a polyhedra.
-- [`traf`](@ref) - *Method*, Converts a `POI` -> `IEQ` or `IEQ` -> `POI`.
-- [`posie`](@ref) - *Method*, Enumerates the points and rays of a `POI` which satisfy the linear system of an `IEQ`.
-- [`fctp`](@ref) - *Method*, Given a set of inequalities and a `POI`, determines which
-        inequalities tightly bound the `POI` and which inequalities exclude elements of the `POI`.
+*Types*
+- [`POI`](@ref) - The vertex representation of a polyhedra.
+- [`IEQ`](@ref) - The intersecting halfspace representation of a polyhedra.
+
+*Methods*
+- [`traf`](@ref) - Converts a `POI` -> `IEQ` or `IEQ` -> `POI`.
+- [`portsort`](@ref) - Sorts the elements of `POI` and `IEQ` structs.
+- [`posie`](@ref) - Enumerates the points and rays of a `POI` which satisfy the linear system of an `IEQ`.
+- [`fctp`](@ref) - Given inequalities and a `POI`, determines which inequalities
+        tightly bound the `POI` and which inequalities exclude elements of the `POI`.
         In each case, the satisfying/violating elements are returned in a `POI`.
 
 The compiled PORTA binaries are accessed through [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl)
@@ -35,7 +39,7 @@ using PORTA_jll
 using Suppressor
 
 export POI, IEQ # types
-export traf     # xporta methods
+export traf, portsort  # xporta methods
 export fctp, posie     # valid methods
 
 # including local files
