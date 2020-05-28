@@ -11,11 +11,12 @@ historical names from the PORTA software.
 
 *Methods*
 - [`traf`](@ref) - Converts a `POI` -> `IEQ` or `IEQ` -> `POI`.
-- [`portsort`](@ref) - Sorts the elements of `POI` and `IEQ` structs.
 - [`dim`](@ref) - Given a `POI` computes the dimension and constraining equalities of the `POI` convex hull.
+- [`fmel`](@ref) - Projects the linear system of `IEQ` onto a subspace using fourier-motzkin elimination.
+- [`vint`](@ref) - Enumerates the integral points which satisfy the linear system specified by an `IEQ`.
+- [`portsort`](@ref) - Sorts the elements of `POI` and `IEQ` structs.
 - [`posie`](@ref) - Enumerates the points and rays of a `POI` which satisfy the linear system of an `IEQ`.
 - [`fctp`](@ref) - Determines if inequalities are tight or violated by elements of a `POI`.
-- [`vint`](@ref) - Enumerates the integral points which satisfy the linear system specified by an `IEQ`.
 
 The compiled PORTA binaries are accessed through [PORTA_jll.jl](https://github.com/JuliaBinaryWrappers/PORTA_jll.jl)
 
@@ -39,8 +40,8 @@ using PORTA_jll
 using Suppressor
 
 export POI, IEQ # types
-export traf, portsort, dim # xporta methods
-export fctp, posie, vint   # valid methods
+export traf, portsort, dim, fmel # xporta methods
+export fctp, posie, vint         # valid methods
 
 # including local files
 include("./types.jl")

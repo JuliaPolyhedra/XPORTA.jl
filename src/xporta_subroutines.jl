@@ -91,7 +91,7 @@ function traf(poi::POI;
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options any ordering of '-poscvl' and substrings."))
+            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options are any ordering of '-poscvl' and substrings."))
         end
         push!(xporta_args, opt_flag)
     end
@@ -122,7 +122,7 @@ function traf(ieq::IEQ;
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options any ordering of '-poscvl' and permuted substrings."))
+            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options are any ordering of '-poscvl' and permuted substrings."))
         end
     end
 
@@ -281,4 +281,80 @@ function dim(poi::POI;
         "dim" => parse(Int, dim_match.captures[1]),
         "ieq" => IEQ(equalities = equations)
     )
+end
+
+"""
+    fmel( ieq::IEQ; kwargs... ) :: IEQ{Rational{Int}}
+
+Projects the linear system of `IEQ` onto a subspace using fourier-motzkin elimination.
+The projected linear system is returned in an `IEQ`. Note that redundant inequalities
+may be present in the returned `IEQ`.
+
+The `elimination_order` field of the `IEQ` must be populated and of length `dim`.
+A `0` value indicates a parameter which will not be eliminated and `1,2,...` specifies
+the order in which the parameters will be eliminated. Performance may change based
+on the order of elimination.
+
+`kwargs` specifies keyword args:
+* `dir::String = "./"` - The directory in which to write files.
+* `filename::String = "fmel_tmp"`- The name of produced files.
+* `opt_flag::String = ""` - optional flags for the `fmel` subroutine.
+* `cleanup::Bool = true` - If `true`, created files are removed after computation.
+* `verbose::Bool = false`- If `true`, PORTA will print progress to `STDOUT`.
+
+A `DomainError` is thrown if the `elimination_order` field is not of length `dim`.
+A `DomainError` is thrown if the `opt_flag` argument is not a substring of `"-pcl"`
+or its permutations.
+
+The valid options for the `opt_flag`:
+```
+-p    Unbuffered redirection of the terminal messages into the file
+      input_fname_with_suffix_'prt'
+
+-c    Generation of new inequalities without the rule of Chernikov.
+
+-l    Use  a  special  integer arithmetic allowing the integers to have arbitrary
+      lengths.  This arithmetic is not as efficient as the system's integer
+      arithmetic with respect to time and storage requirements.
+
+      Note: Output values which exceed the 32-bit integer storage  size  are written
+      in hexadecimal format (hex). Such hexadecimal format can not be reread as input.
+```
+
+For more details regarding `fmel` please refer to the [PORTA fmel documentation](https://github.com/bdoolittle/julia-porta#fmel).
+"""
+function fmel(ieq::IEQ;
+    dir::String="./",
+    filename::String="fmel_tmp",
+    opt_flag::String="",
+    cleanup::Bool=true,
+    verbose::Bool=false
+) :: IEQ{Rational{Int}}
+
+    workdir = cleanup ? make_porta_tmp(dir) : dir
+
+    if length(ieq.elimination_order) != ieq.dim
+        throw(DomainError(ieq.elimination_order, "elimination_order field is required for `fmel` and there should be a single row."))
+    end
+
+    xporta_args = Array{String,1}(undef,0)
+    if opt_flag != ""
+        if !occursin(r"^-[pcl]{1,3}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
+            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options are any ordering of '-pcl' and substrings."))
+        end
+        push!(xporta_args, opt_flag)
+    end
+
+    ieq_filepath = write_ieq(filename, ieq, dir=workdir)
+    push!(xporta_args, ieq_filepath)
+
+    run_xporta("-F", xporta_args, verbose=verbose)
+
+    ieq = read_ieq(ieq_filepath * ".ieq")
+
+    if cleanup
+        rm_porta_tmp(dir)
+    end
+
+    return ieq
 end

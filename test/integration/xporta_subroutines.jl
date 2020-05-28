@@ -282,11 +282,89 @@ end
             0 0 1 0 0 1 0 0 1 1;
         ]
     end
+end
 
+@testset "fmel()" begin
+    @testset "invalid elimination order fields" begin
+        # too short
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir)
+        # too long
+        @test_throws DomainError fmel(IEQ(inequalities =[-1 0 1; 0 -1 1], elimination_order = [1 2 0]), dir=dir)
+        # too many rows
+        @test_throws DomainError fmel(IEQ(inequalities =[-1 0 1; 0 -1 1], elimination_order = [1 0;0 1]), dir=dir)
+    end
 
+    @testset "invalid opt_flag" begin
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="c")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="-x")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="-pcll")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="-cc")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="-pcx")
+    end
 
+    @testset "octahedron projections" begin
+        octahedron_ineqs = [
+            1 1 1 1; -1 1 1 1; 1 -1 1 1; 1 1 -1 1;
+            -1 -1 1 1; -1 1 -1 1; 1 -1 -1 1; -1 -1 -1 1;
+        ]
 
+        @testset "project onto coordinate 3" begin
+            fmel_ieq = fmel(IEQ(inequalities = octahedron_ineqs, elimination_order = [1 2 0]), dir=dir)
+            @test fmel_ieq.dim == 3
+            @test fmel_ieq.inequalities == [
+                0 0 0 1; 0 0 1 1; 0 0 1 1; 0 0 -1 1; 0 0 -1 1
+            ]
+        end
 
+        @testset "project onto coordinate 3 (switched order of elimination)" begin
+            fmel_ieq = fmel(IEQ(inequalities = octahedron_ineqs, elimination_order = [2 1 0]), dir=dir)
+            @test fmel_ieq.dim == 3
+            @test fmel_ieq.inequalities == [
+                0 0 0 1; 0 0 1 1; 0 0 1 1; 0 0 -1 1; 0 0 -1 1
+            ]
+        end
+
+        @testset "projection onto coordinate 1" begin
+            fmel_ieq = fmel(IEQ(inequalities = octahedron_ineqs, elimination_order = [0 1 2]), dir=dir)
+            @test fmel_ieq.dim == 3
+            @test fmel_ieq.inequalities == [
+                0 0 0 1; 0 0 0 1; 1 0 0 1; 1 0 0 1; -1 0 0 1; -1 0 0 1
+            ]
+        end
+
+        @testset "projection onto coordinate 2" begin
+            fmel_ieq = fmel(IEQ(inequalities = octahedron_ineqs, elimination_order = [1 0 2]), dir=dir)
+            @test fmel_ieq.dim == 3
+            @test fmel_ieq.inequalities == [
+                0 0 0 1; 0 0 0 1; 0 1 0 1; 0 1 0 1; 0 -1 0 1; 0 -1 0 1
+            ]
+        end
+
+        @testset "projection onto coordinates 2,3 " begin
+            fmel_ieq = fmel(IEQ(inequalities = octahedron_ineqs, elimination_order = [1 0 0]), dir=dir)
+            @test fmel_ieq.dim == 3
+            @test fmel_ieq.inequalities == [
+                0 0 1 1; 0 0 1 1; 0 1 0 1; 0 1 0 1; 0 1 1 1; 0 -1 0 1; 0 -1 0 1;
+                0 0 -1 1; 0 0 -1 1; 0 -1 1 1; 0 1 -1 1; 0 -1 -1 1;
+            ]
+        end
+
+        @testset "inequalities return if no terms eliminated" begin
+            fmel_ieq = fmel(IEQ(inequalities = octahedron_ineqs, elimination_order = [0 0 0]), dir=dir)
+            @test fmel_ieq.dim == 3
+            @test fmel_ieq.inequalities == octahedron_ineqs
+        end
+
+        @testset "many redundant inequalities without rule of chernikov" begin
+            fmel_ieq = fmel(IEQ(inequalities = octahedron_ineqs, elimination_order = [1 2 0]), dir=dir, opt_flag="-c")
+            @test fmel_ieq.dim == 3
+            @test fmel_ieq.inequalities == [
+                0 0 0 1;0 0 0 1;0 0 0 1;0 0 1 1;0 0 1 1;0 0 1 1;
+                0 0 -1 1;0 0 -1 1;0 0 -1 1;0 0 1 2;0 0 1 2;0 0 1 2;
+                0 0 1 2;0 0 -1 2;0 0 -1 2;0 0 -1 2; 0 0 -1 2;
+            ]
+        end
+    end
 end
 
 end

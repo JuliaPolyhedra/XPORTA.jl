@@ -137,12 +137,13 @@ function read_ieq(filepath::String)::IEQ{Rational{Int}}
                     end
 
                     # match in/equality sign and rhs value
-                    rhs_match = match(r"(<=|=<|>=|=>|==|=)\s*([-+]?)\s*(\d+)", line)
+                    rhs_match = match(r"(<=|=<|>=|=>|==|=)\s*([-+]?)\s*(\d+)(?:/(\d+))?", line)
 
                     rel_sign = rhs_match.captures[1]
-                    int_sign = (rhs_match.captures[2] === nothing) ? "+" : rhs_match.captures[2]
-                    rhs_int = parse(Int, int_sign*rhs_match.captures[3])
-                    data_vector[end] = rhs_int
+                    rhs_sign = (rhs_match.captures[2] === nothing) ? "+" : rhs_match.captures[2]
+                    rhs_num = parse(Int, rhs_sign*rhs_match.captures[3])
+                    rhs_den = (rhs_match.captures[4] === nothing) ? 1 : parse(Int, rhs_match.captures[4])
+                    data_vector[end] = Rational(rhs_num, rhs_den)
 
                     if (rel_sign == "<=") || (rel_sign == "=<")
                         push!(inequality_rows, data_vector)
