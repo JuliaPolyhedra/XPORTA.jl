@@ -178,6 +178,34 @@ end
         @test ex2_poi.conv_section == ex2_poi_match.conv_section
         @test ex2_poi.cone_section == ex2_poi_match.cone_section
     end
+
+    @testset "opt_arg flags" begin
+        @testset "invalid options" begin
+            @test_throws DomainError traf(POI(vertices=[1 0 0;0 1 0;0 0 1]), dir=dir, opt_flag="p")
+            @test_throws DomainError traf(POI(vertices=[1 0 0;0 1 0;0 0 1]), dir=dir, opt_flag="-pop")
+            @test_throws DomainError traf(POI(vertices=[1 0 0;0 1 0;0 0 1]), dir=dir, opt_flag="-x")
+
+            @test_throws DomainError traf(IEQ(inequalities=[-1 0 0;0 -1 0]), dir=dir, opt_flag="p")
+            @test_throws DomainError traf(IEQ(inequalities=[-1 0 0;0 -1 0]), dir=dir, opt_flag="-pop")
+            @test_throws DomainError traf(IEQ(inequalities=[-1 0 0;0 -1 0]), dir=dir, opt_flag="-x")
+        end
+
+        @testset "-p flag will suppress output" begin
+            tmpdir = XPORTA.make_porta_tmp(dir)
+
+            traf(POI(vertices=[1 0 0;0 1 0;0 0 1]), dir=tmpdir, opt_flag="-p", cleanup=false)
+
+            @test isfile(tmpdir * "/traf_tmp.poi.prt")
+            XPORTA.rm_porta_tmp(dir)
+
+            tmpdir = XPORTA.make_porta_tmp(dir)
+
+            traf(IEQ(inequalities=[-1 0 0;0 -1 0]), dir=tmpdir, opt_flag="-p", cleanup=false)
+
+            @test isfile(tmpdir * "/traf_tmp.ieq.prt")
+            XPORTA.rm_porta_tmp(dir)
+        end
+    end
 end
 
 @testset "portsort()" begin
@@ -295,11 +323,11 @@ end
     end
 
     @testset "invalid opt_flag" begin
-        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="c")
-        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="-x")
-        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="-pcll")
-        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="-cc")
-        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1]), dir=dir, opt_flag="-pcx")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1], elimination_order=[1 0]), dir=dir, opt_flag="c")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1], elimination_order=[1 0]), dir=dir, opt_flag="-x")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1], elimination_order=[1 0]), dir=dir, opt_flag="-pcll")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1], elimination_order=[1 0]), dir=dir, opt_flag="-cc")
+        @test_throws DomainError fmel(IEQ(inequalities = [-1 0 1; 0 -1 1], elimination_order=[1 0]), dir=dir, opt_flag="-pcx")
     end
 
     @testset "octahedron projections" begin

@@ -91,7 +91,7 @@ function traf(poi::POI;
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options are any ordering of '-poscvl' and substrings."))
+            throw(DomainError(opt_flag, "invalid `opt_flag` argument. Valid options are any ordering of '-poscvl' and substrings."))
         end
         push!(xporta_args, opt_flag)
     end
@@ -122,8 +122,9 @@ function traf(ieq::IEQ;
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[poscvl]{1,6}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options are any ordering of '-poscvl' and permuted substrings."))
+            throw(DomainError(opt_flag, "invalid `opt_flag` argument. Valid options are any ordering of '-poscvl' and permuted substrings."))
         end
+        push!(xporta_args, opt_flag)
     end
 
     ieq_dir = cleanup ? make_porta_tmp(dir) : dir
@@ -340,7 +341,7 @@ function fmel(ieq::IEQ;
     xporta_args = Array{String,1}(undef,0)
     if opt_flag != ""
         if !occursin(r"^-[pcl]{1,3}$", opt_flag) || (length(opt_flag) != length(unique(opt_flag)))
-            throw(DomainError(opt_flags, "invalid `opt_flag` argument. Valid options are any ordering of '-pcl' and substrings."))
+            throw(DomainError(opt_flag, "invalid `opt_flag` argument. Valid options are any ordering of '-pcl' and substrings."))
         end
         push!(xporta_args, opt_flag)
     end
