@@ -27,7 +27,8 @@ converted to type `Rational{Int}`.
 Fields:
 * `conv_section` - each matrix row is a vertex.
 * `cone_section` - each matrix row is a ray.
-* `valid` -  a feasible point for the vertex representation.
+* `valid` -  a feasible point for the vertex representation. In the context of a `POI`,
+        this field has no known use.
 * `dim` - the dimension of vertices and rays. This field is auto-populated on construction.
 
 A `DomainError` is thrown if the column dimension of rays and vertices is not equal.
@@ -113,8 +114,8 @@ both have the following form.
 `IEQ` Fields:
 * `inequalities`: each matrix row is a linear inequality, the first M elements indexed `1:(end-1)` are α and the last element indexed `end` is β.
 * `equalities`: each matrix row is linear equality, the first M elements indexed `1:(end-1)` are α and the last element indexed `end` is β.
-* `lower_bounds`: each matrix row is a lower bound for enumerating integral points with `vint`.
-* `upper_bounds`: each matrix row is an upper bound for enumerating integral points with `vint`.
+* `lower_bounds`: a row vector which specifies the lower bound on each individual parameter. Used for enumerating integral points with `vint`.
+* `upper_bounds`: a row vector which specifies the upper bound on each individual parameter. Used for enumerating integral points with `vint`.
 * `valid`: a feasible point for the linear system.
 * `dim`: the dimension of in/equalities, upper/lower bounds, etc. This field is auto-populated on construction.
 
