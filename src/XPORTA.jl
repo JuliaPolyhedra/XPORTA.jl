@@ -39,6 +39,8 @@ using PORTA_jll
 
 using Suppressor
 
+import Polyhedra
+
 export POI, IEQ # types
 export traf, portsort, dim, fmel # xporta methods
 export fctp, posie, vint         # valid methods
@@ -49,5 +51,6 @@ include("./filesystem.jl") # utilities for create and removing directories
 include("./file_io.jl")    # read/write functionality
 include("./xporta_subroutines.jl") # wrapper for the xporta binaries.
 include("./valid_subroutines.jl") # wrapper for the valid binaries
+include("./polyhedron.jl")
 
 end # module

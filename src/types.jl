@@ -6,6 +6,55 @@ PORTA is a rational solver, its methods accept integer or rational valued matric
 """
 PortaMatrix = Union{Matrix{Int}, Matrix{Rational{Int}}}
 
+macro _norepelem(rep, elem)
+    idxs = Symbol(string(elem) * "Indices")
+    idx = Symbol(string(elem) * "Index")
+    quote
+        Base.length(idxs::Polyhedra.$idxs{T, <:$rep}) where {T} = 0
+        Base.isempty(idxs::Polyhedra.$idxs{T, <:$rep}) where {T} = true
+        Base.iterate(idxs::Polyhedra.$idxs{T, <:$rep}) where {T} = nothing
+    end
+end
+
+macro norepelem(rep, elem)
+    idxs = Symbol(string(elem) * "Indices")
+    idx = Symbol(string(elem) * "Index")
+    quote
+        Base.length(idxs::Polyhedra.$idxs{T, <:$rep{T}}) where {T} = 0
+        Base.isempty(idxs::Polyhedra.$idxs{T, <:$rep{T}}) where {T} = true
+        Base.iterate(idxs::Polyhedra.$idxs{T, <:$rep{T}}) where {T} = nothing
+    end
+end
+
+
+"""
+The representation `rep` contain the elements `elem` inside a vector in the field `field`.
+"""
+macro matrepelem(rep, elem, field)
+    idxs = Symbol(string(elem) * "Indices")
+    idx = Symbol(string(elem) * "Index")
+    esc(quote
+        Base.length(idxs::Polyhedra.$idxs{T, <:$rep{T}}) where {T} = size(idxs.rep.$field, 1)
+        Base.isempty(idxs::Polyhedra.$idxs{T, <:$rep{T}}) where {T} = isempty(idxs.rep.$field)
+        function Polyhedra.startindex(idxs::Polyhedra.$idxs{T, <:$rep{T}}) where {T}
+            if isempty(idxs.rep.$field)
+                return nothing
+            else
+                return eltype(idxs)(1)
+            end
+        end
+        #Base.get(rep::$rep{T}, idx::$idx{T}) where {T} = rep.$field[idx.value, :]
+        function Polyhedra.nextindex(rep::$rep{T}, idx::Polyhedra.$idx{T}) where {T}
+            if idx.value >= size(rep.$field, 1)
+                return nothing
+            else
+                return typeof(idx)(idx.value + 1)
+            end
+        end
+    end)
+end
+
+
 """
 The vertex representation of a polyhedron. This struct is analogous to PORTA files
 with the `.poi` extension. Please refer to the [PORTA General File Format docs](https://github.com/bdoolittle/julia-porta/blob/master/README.md#general-file-format)
@@ -33,7 +82,7 @@ Fields:
 
 A `DomainError` is thrown if the column dimension of rays and vertices is not equal.
 """
-struct POI{T}
+struct POI{T} <: Polyhedra.VRepresentation{T}
     conv_section :: Matrix{T} # Collection of vertices
     cone_section :: Matrix{T} # Collection of Rays
     valid :: Matrix{T}
@@ -62,6 +111,47 @@ struct POI{T}
 
         new{poi_type}(poi_args..., max_dim)
     end
+end
+
+@norepelem POI Line
+
+@matrepelem POI Point conv_section
+function Base.get(rep::POI{T}, idx::Polyhedra.PointIndex{T}) where T
+    return rep.conv_section[idx.value, :]
+end
+
+@matrepelem POI Ray cone_section
+function Base.get(rep::POI{T}, idx::Polyhedra.RayIndex{T}) where T
+    return Polyhedra.Ray(rep.cone_section[idx.value, :])
+end
+
+function vmatrix!(matrix, elements, offset)
+    for el in elements
+        offset += 1
+        matrix[offset, :] = Polyhedra.coord(el)
+    end
+    return offset
+end
+
+function POI{T}(D::Polyhedra.FullDim, vits::Polyhedra.VIt{T}...) where {T}
+    points, lines, rays = Polyhedra.fillvits(D, vits...)
+    d = Polyhedra.fulldim(D)
+    conv = Matrix{T}(undef, length(points), d)
+    vmatrix!(conv, points, 0)
+    cone = Matrix{T}(undef, 2length(lines) + length(rays), d)
+    offset = 0
+    for el in lines
+        offset += 1
+        cone[offset, :] = Polyhedra.coord(el)
+        offset += 1
+        cone[offset, :] = -Polyhedra.coord(el)
+    end
+    offset = vmatrix!(cone, rays, 2length(lines))
+    @assert offset == size(cone, 1)
+    return POI(
+        vertices = conv,
+        rays = cone,
+    )
 end
 
 @doc raw"""
@@ -121,7 +211,7 @@ both have the following form.
 
 A `DomainError` is thrown if the column dimension of fields is not equal.
 """
-struct IEQ{T}
+struct IEQ{T} <: Polyhedra.HRepresentation{T}
     valid :: Matrix{T}
     inequalities :: Matrix{T}
     equalities :: Matrix{T}
@@ -160,3 +250,34 @@ struct IEQ{T}
         new{ieq_type}(rational_args..., int_args..., max_dim)
     end
 end
+
+function hmatrix(d::Polyhedra.FullDim, hs::Polyhedra.HIt{T}) where T
+    A = Matrix{T}(undef, length(hs), Polyhedra.fulldim(d) + 1)
+    for (i, h) in enumerate(hs)
+        A[i, 1:(end-1)] = h.a
+        A[i, end] = h.β
+    end
+    return A
+end
+
+function IEQ{T}(d::Polyhedra.FullDim, hyperplanes::Polyhedra.HyperPlaneIt{T}, halfspaces::Polyhedra.HalfSpaceIt{T}) where {T}
+    return IEQ(
+        equalities = hmatrix(d, hyperplanes),
+        inequalities = hmatrix(d, halfspaces),
+    )
+end
+
+@matrepelem IEQ HyperPlane equalities
+function Base.get(rep::IEQ{T}, idx::Polyhedra.HyperPlaneIndex{T}) where T
+    return Polyhedra.HyperPlane(rep.equalities[idx.value, 1:(end - 1)], rep.equalities[idx.value, end])
+end
+
+@matrepelem IEQ HalfSpace inequalities
+function Base.get(rep::IEQ{T}, idx::Polyhedra.HalfSpaceIndex{T}) where T
+    return Polyhedra.HalfSpace(rep.inequalities[idx.value, 1:(end - 1)], rep.inequalities[idx.value, end])
+end
+
+Polyhedra.FullDim(rep::Union{IEQ, POI}) = rep.dim
+Polyhedra.vvectortype(::Type{POI{T}}) where {T} = Vector{T}
+Polyhedra.hvectortype(::Type{IEQ{T}}) where {T} = Vector{T}
+Polyhedra.coefficient_type(::Union{Type{POI{T}}, Type{IEQ{T}}}) where {T} = T
