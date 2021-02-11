@@ -36,6 +36,11 @@ function _test_runner()
                 end
             end
         end
+
+        @testset "Polyhedra interface tests:" begin
+            println("running Polyhedra interface tests.")
+            include("polyhedron.jl")
+        end
     end
 end
 
