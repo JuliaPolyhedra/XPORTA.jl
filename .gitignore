@@ -10,3 +10,4 @@ porta.log
 porta_tmp
 
 Manifest.toml
+**/Manifest.toml
