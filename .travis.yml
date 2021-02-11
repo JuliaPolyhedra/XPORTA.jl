@@ -5,14 +5,11 @@ os:
   - osx
 julia:
   - 1.4
-  - nightly
 notifications:
   email: false
 codecov: true
 coveralls: true
 jobs:
-  allow_failures:
-    - julia: nightly
   fast_finish: true
   include:
     - stage: Documentation
