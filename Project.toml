@@ -1,6 +1,6 @@
 name = "XPORTA"
 uuid = "8c143463-af6f-456f-8aed-72447cb569d2"
-authors = ["Brian Doolittle"]
+authors = ["Brian Doolittle and Benoît Legat"]
 version = "0.1.2"
 
 [deps]
