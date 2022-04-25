@@ -9,8 +9,8 @@
 ## Documentation
 
 * XPORTA.jl documentation: [JuliaPolyhedra.github.io/XPORTA.jl/dev/](https://JuliaPolyhedra.github.io/XPORTA.jl/dev/)
-* PORTA documentation: [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta)
-* Official PORTA software: [http://porta.zib.de](http://porta.zib.de/)
+* Julia distribution of PORTA: [github.com/bdoolittle/julia-porta](https://github.com/bdoolittle/julia-porta)
+* Legacy PORTA software: [http://porta.zib.de](http://porta.zib.de/)
 
 ## Licensing
 
