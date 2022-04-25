@@ -9,6 +9,6 @@ Polyhedra = "67491407-f73d-577b-9b50-8179a7c68029"
 Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
 
 [compat]
-Polyhedra = "0.6.13"
+Polyhedra = "0.6.13, 0.7"
 Suppressor = "0.2.0"
 julia = "1.4"
