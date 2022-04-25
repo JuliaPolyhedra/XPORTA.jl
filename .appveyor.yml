@@ -1,13 +1,13 @@
 # Documentation: https://github.com/JuliaCI/Appveyor.jl
 environment:
   matrix:
-  - julia_version: 1.4
+  - julia_version: 1.6
 platform:
   - x86
   - x64
 branches:
   only:
-    - master
+    - main
 notifications:
   - provider: Email
     on_build_success: false

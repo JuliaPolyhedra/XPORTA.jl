@@ -36,9 +36,6 @@ end
         XPORTA.rm_porta_tmp(dir)
         @test !isfile(tmp_file)
         @test !isdir(dir*"porta_tmp")
-
-        # verify that directory is missing causing a SystemError to be thrown
-        @test_throws SystemError walkdir(tmp_dir_path)
     end
 end
 
