@@ -2,9 +2,12 @@
 
 *A julia wrapper for the [PORTA](http://porta.zib.de/) polyhedral analysis software.*
 
-| Documentation | Test Coverage | Linux/Mac | Windows | FreeBSD |
-|:-------------:|:-------------:|:---------:|:-------:|:-------:|
-|[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaPolyhedra.github.io/XPORTA.jl/dev) | [![Coverage Status](https://coveralls.io/repos/github/JuliaPolyhedra/XPORTA.jl/badge.svg?branch=main)](https://coveralls.io/github/JuliaPolyhedra/XPORTA.jl?branch=main)[![codecov](https://codecov.io/gh/JuliaPolyhedra/XPORTA.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/JuliaPolyhedra/XPORTA.jl) | [![Linux/Mac Build Status](https://travis-ci.org/JuliaPolyhedra/XPORTA.jl.svg?branch=main)](https://travis-ci.org/github/JuliaPolyhedra/XPORTA.jl) | [![Windows Build status](https://ci.appveyor.com/api/projects/status/2kjsbavtulwhsamu?svg=true)](https://ci.appveyor.com/project/bdoolittle/xporta-jl) | [![FreeBSD Build Status](https://api.cirrus-ci.com/github/JuliaPolyhedra/XPORTA.jl.svg)](https://cirrus-ci.com/github/JuliaPolyhedra/XPORTA.jl) |
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://JuliaPolyhedra.github.io/XPORTA.jl/dev)[![Test Status](https://github.com/JuliaPolyhedra/XPORTA.jl/actions/workflows/run_tests.yml/badge.svg)](https://github.com/JuliaPolyhedra/XPORTA.jl/actions/workflows/run_tests.yml)
+
+XPORTA provides two features:
+
+ - a thin wrapper around the complete PORTA API
+ - an interface to [Polyhedra](https://github.com/JuliaPolyhedra/Polyhedra.jl)
 
 ## Documentation
 
@@ -15,6 +18,16 @@
 ## Licensing
 
 PORTA and XPORTA.jl are licensed under the GNU General Public License (GPL) v2.0.
+
+## Use with Polyhedra
+
+To use XPORTA with Polyhedra, use `XPORTA.Library`:
+
+```julia
+using Polyhedra, XPORTA
+h = hrep(...)
+p = polyhedron(h, XPORTA.Library())
+```
 
 ## Acknowledgments
 
